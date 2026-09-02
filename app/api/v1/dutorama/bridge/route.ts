@@ -19,7 +19,7 @@ const actionSchema = z.discriminatedUnion("action", [
         legal_name: z.string().min(1).max(200).nullable().optional(),
         timezone: z.string().min(1).max(80).optional(),
         locale: z.string().min(2).max(20).optional(),
-        status: z.enum(["active", "inactive", "suspended"]).optional(),
+        status: z.enum(["active", "suspended"]).optional(),
       })
       .refine((v) => Object.keys(v).length > 0, "changes cannot be empty"),
   }),
