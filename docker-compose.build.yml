@@ -17,6 +17,9 @@ services:
       # não veio de release nenhuma.
       args:
         APP_VERSION: ${APP_VERSION:-local}
+        # CI pode manter o heap maior; em VPS menores use, por exemplo,
+        # BUILD_NODE_OPTIONS=--max-old-space-size=1536 antes do compose build.
+        BUILD_NODE_OPTIONS: ${BUILD_NODE_OPTIONS:---max-old-space-size=4096}
     image: ${APP_IMAGE:-deskcomm-app:local}
     pull_policy: never
 
