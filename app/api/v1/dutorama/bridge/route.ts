@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
       case "list_contacts": {
         const { data, error } = await admin
           .from("contacts")
-          .select("id,organization_id,name,phone,email,created_at,updated_at")
+          .select("id,organization_id,name,display_name,phone_number,email,created_at,updated_at")
           .eq("organization_id", input.organization_id)
           .order("created_at", { ascending: false })
           .limit(input.limit ?? 50);
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
       case "list_conversations": {
         const { data, error } = await admin
           .from("conversations")
-          .select("id,organization_id,contact_id,channel_session_id,status,assigned_user_id,last_inbound_at,last_outbound_at,created_at,updated_at")
+          .select("id,organization_id,contact_id,channel_session_id,status,assigned_to_user_id,last_inbound_at,last_outbound_at,last_message_at,last_message_preview,created_at,updated_at")
           .eq("organization_id", input.organization_id)
           .order("updated_at", { ascending: false })
           .limit(input.limit ?? 50);
