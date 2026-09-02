@@ -72,16 +72,12 @@ export const CHANNEL_CAPABILITIES: Record<ChannelProvider, ChannelCapabilities> 
 };
 
 /**
- * O que assumir quando o banco NÃO diz qual é o canal — só quando a linha de
- * `channel_sessions` não pôde ser lida (a coluna é `not null default 'waha'`,
- * então uma sessão que existe sempre responde).
+ * O que assumir quando o banco NÃO diz qual é o canal — somente como fallback.
  *
- * Espelha o default da coluna de propósito: é o que mantém o comportamento
- * idêntico ao dos literais que as Tasks 4b/5 deixaram no código. E é o canal
- * CONSERVADOR dos dois — banRisk armado, throttle e warm-up ligados; errar para
- * o lado do meta_cloud desarmaria o anti-ban num número que pode ser banido.
+ * No fork Dutorama, o canal oficial da Meta é o padrão deliberado. Sessões que
+ * já possuem `provider` salvo no banco continuam respeitando o próprio valor.
  */
-export const DEFAULT_CHANNEL_PROVIDER: ChannelProvider = "waha";
+export const DEFAULT_CHANNEL_PROVIDER: ChannelProvider = "meta_cloud";
 
 /**
  * Constantes nomeadas dos providers. Existem para que nenhum arquivo fora deste

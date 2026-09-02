@@ -65,6 +65,8 @@ export const AUDIT_ACTIONS = [
   "token.revoked",
   "profile.updated",
   "org.updated",
+  /** Organização alterada pela ponte administrativa externa do Dutorama. */
+  "dutorama.organization_updated",
   "pipeline.config_updated",
   "mfa.recovery_codes_regenerated",
   "notification_prefs.changed",
