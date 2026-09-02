@@ -70,6 +70,10 @@ const schema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: requiredAlways("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
   SUPABASE_SERVICE_ROLE_KEY: requiredAlways("SUPABASE_SERVICE_ROLE_KEY"),
 
+  // Ponte administrativa externa do fork Dutorama. Vazia = rota desligada
+  // (fail-closed). O instalador gera e preserva um valor por instalação.
+  DUTORAMA_BRIDGE_TOKEN: z.string().optional().default(""),
+
   // Cron / interno
   INTERNAL_SECRET: required("INTERNAL_SECRET"),
   /** Optional dedicated secret for cron endpoints (S-06.07 onwards). */

@@ -1,6 +1,10 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { randomUUID } from "node:crypto";
+import type { NextRequest } from "next/server";
 import { z } from "zod";
+import { fail, ok } from "@/lib/api/wrappers";
+import { audit } from "@/lib/audit";
 import { authorizeDutoramaBridge } from "@/lib/dutorama/bridge-auth";
+import { logger } from "@/lib/logger";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -16,7 +20,7 @@ const actionSchema = z.discriminatedUnion("action", [
     changes: z
       .object({
         display_name: z.string().min(1).max(160).optional(),
-        legal_name: z.string().min(1).max(200).nullable().optional(),
+        legal_name: z.string().min(1).max(200).optional(),
         timezone: z.string().min(1).max(80).optional(),
         locale: z.string().min(2).max(20).optional(),
         status: z.enum(["active", "suspended"]).optional(),
@@ -28,24 +32,24 @@ const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("list_conversations"), organization_id: z.string().uuid(), limit: z.number().int().min(1).max(100).optional() }),
 ]);
 
-function unauthorized() {
-  return NextResponse.json(
-    { ok: false, error: "bridge_unauthorized" },
-    { status: 401, headers: { "Cache-Control": "no-store" } },
-  );
+const noStore = { "Cache-Control": "no-store" };
+
+function unauthorized(requestId: string) {
+  return fail("bridge_unauthorized", "Credencial da ponte inválida.", 401, {
+    requestId,
+    headers: noStore,
+  });
 }
 
-function response(data: unknown, status = 200) {
-  return NextResponse.json(
-    { ok: status < 400, data },
-    { status, headers: { "Cache-Control": "no-store" } },
-  );
+function requestId(req: NextRequest): string {
+  return req.headers.get("x-request-id") ?? randomUUID();
 }
 
 export async function GET(req: NextRequest) {
-  if (!authorizeDutoramaBridge(req)) return unauthorized();
+  const id = requestId(req);
+  if (!authorizeDutoramaBridge(req)) return unauthorized(id);
 
-  return response({
+  return ok({
     service: "dutorama-bridge",
     status: "ready",
     version: 1,
@@ -58,22 +62,30 @@ export async function GET(req: NextRequest) {
       "list_contacts",
       "list_conversations",
     ],
-  });
+  }, { requestId: id, headers: noStore });
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorizeDutoramaBridge(req)) return unauthorized();
+  const id = requestId(req);
+  if (!authorizeDutoramaBridge(req)) return unauthorized(id);
 
   let payload: unknown;
   try {
     payload = await req.json();
   } catch {
-    return response({ error: "invalid_json" }, 400);
+    return fail("invalid_json", "O corpo precisa ser um JSON válido.", 400, {
+      requestId: id,
+      headers: noStore,
+    });
   }
 
   const parsed = actionSchema.safeParse(payload);
   if (!parsed.success) {
-    return response({ error: "invalid_request", details: parsed.error.flatten() }, 400);
+    return fail("invalid_request", "A ação solicitada é inválida.", 400, {
+      details: parsed.error.flatten(),
+      requestId: id,
+      headers: noStore,
+    });
   }
 
   const admin = createAdminClient();
@@ -88,12 +100,12 @@ export async function POST(req: NextRequest) {
           admin.from("conversations").select("*", { count: "exact", head: true }),
           admin.from("channel_sessions").select("*", { count: "exact", head: true }),
         ]);
-        return response({
+        return ok({
           organizations: orgs.count ?? 0,
           contacts: contacts.count ?? 0,
           conversations: conversations.count ?? 0,
           channel_sessions: channels.count ?? 0,
-        });
+        }, { requestId: id, headers: noStore });
       }
 
       case "list_organizations": {
@@ -103,7 +115,7 @@ export async function POST(req: NextRequest) {
           .order("created_at", { ascending: false })
           .limit(input.limit ?? 50);
         if (error) throw error;
-        return response(data ?? []);
+        return ok(data ?? [], { requestId: id, headers: noStore });
       }
 
       case "get_organization": {
@@ -113,7 +125,7 @@ export async function POST(req: NextRequest) {
           .eq("id", input.organization_id)
           .single();
         if (error) throw error;
-        return response(data);
+        return ok(data, { requestId: id, headers: noStore });
       }
 
       case "update_organization": {
@@ -124,7 +136,17 @@ export async function POST(req: NextRequest) {
           .select("id,slug,display_name,legal_name,status,timezone,locale,updated_at")
           .single();
         if (error) throw error;
-        return response(data);
+        void audit({
+          action: "dutorama.organization_updated",
+          organizationId: input.organization_id,
+          resourceType: "organization",
+          resourceId: input.organization_id,
+          requestId: id,
+          bypassedRls: true,
+          actingAsPlatformAdmin: true,
+          metadata: { changed_fields: Object.keys(input.changes).sort() },
+        });
+        return ok(data, { requestId: id, headers: noStore });
       }
 
       case "list_channel_sessions": {
@@ -136,7 +158,7 @@ export async function POST(req: NextRequest) {
         if (input.organization_id) query = query.eq("organization_id", input.organization_id);
         const { data, error } = await query;
         if (error) throw error;
-        return response(data ?? []);
+        return ok(data ?? [], { requestId: id, headers: noStore });
       }
 
       case "list_contacts": {
@@ -147,7 +169,7 @@ export async function POST(req: NextRequest) {
           .order("created_at", { ascending: false })
           .limit(input.limit ?? 50);
         if (error) throw error;
-        return response(data ?? []);
+        return ok(data ?? [], { requestId: id, headers: noStore });
       }
 
       case "list_conversations": {
@@ -158,11 +180,18 @@ export async function POST(req: NextRequest) {
           .order("updated_at", { ascending: false })
           .limit(input.limit ?? 50);
         if (error) throw error;
-        return response(data ?? []);
+        return ok(data ?? [], { requestId: id, headers: noStore });
       }
     }
   } catch (error) {
-    console.error("[dutorama-bridge] action failed", error);
-    return response({ error: "bridge_action_failed" }, 500);
+    logger.error("[dutorama-bridge] falha ao executar ação", {
+      action: input.action,
+      error: error instanceof Error ? error.message : "erro desconhecido",
+      request_id: id,
+    });
+    return fail("bridge_action_failed", "Não foi possível executar a ação da ponte.", 500, {
+      requestId: id,
+      headers: noStore,
+    });
   }
 }

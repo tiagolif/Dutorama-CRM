@@ -1,5 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import type { NextRequest } from "next/server";
+import { env } from "@/lib/env";
 
 /**
  * Autenticação da ponte administrativa do Dutorama.
@@ -8,7 +9,7 @@ import type { NextRequest } from "next/server";
  * nunca deve ser versionado; ele vive apenas no ambiente da instalação.
  */
 export function authorizeDutoramaBridge(req: NextRequest): boolean {
-  const expected = process.env.DUTORAMA_BRIDGE_TOKEN?.trim();
+  const expected = env.DUTORAMA_BRIDGE_TOKEN.trim();
   if (!expected) return false;
 
   const header = req.headers.get("authorization") ?? "";
