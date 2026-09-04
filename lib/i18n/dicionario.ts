@@ -6328,6 +6328,32 @@ export const DICIONARIO: Traducoes = {
   "Salvar produto": { es: "Guardar producto" },
   "em estoque": { es: "en stock" },
   "sem controle de estoque": { es: "sin control de stock" },
+
+  // ─── Assistente geral no cabeçalho ───
+  "Não consegui carregar as IAs.": { es: "No pude cargar las IA." },
+  "A IA não conseguiu responder.": { es: "La IA no pudo responder." },
+  "Abrir assistente geral": { es: "Abrir asistente general" },
+  "Assistente geral": { es: "Asistente general" },
+  "Converse sem sair da tela atual.": { es: "Converse sin salir de la pantalla actual." },
+  Usar: { es: "Usar" },
+  "Escolher inteligência artificial": { es: "Elegir inteligencia artificial" },
+  "Escolha uma IA": { es: "Elija una IA" },
+  "Limpar conversa": { es: "Limpiar conversación" },
+  "Nenhuma IA validada está disponível para o chat.": {
+    es: "No hay ninguna IA validada disponible para el chat.",
+  },
+  "Abrir credenciais de IA": { es: "Abrir credenciales de IA" },
+  "Como posso ajudar?": { es: "¿Cómo puedo ayudar?" },
+  "Peça ajuda para analisar, escrever ou esclarecer uma dúvida.": {
+    es: "Pida ayuda para analizar, escribir o aclarar una duda.",
+  },
+  "Pensando…": { es: "Pensando…" },
+  "Digite sua pergunta…": { es: "Escriba su pregunta…" },
+  "Mensagem para o assistente": { es: "Mensaje para el asistente" },
+  "Enviar pergunta": { es: "Enviar pregunta" },
+  "Esta versão orienta e responde, mas não altera dados do CRM.": {
+    es: "Esta versión orienta y responde, pero no modifica datos del CRM.",
+  },
 };
 
 /**

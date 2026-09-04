@@ -59,6 +59,7 @@
 /** O papel que o ponto cumpre — é como a tela agrupa, para quem não é engenheiro. */
 export type PapelDeIa =
   | "atender"
+  | "apoiar"
   | "entender"
   | "proteger"
   | "lembrar"
@@ -66,6 +67,10 @@ export type PapelDeIa =
   | "melhorar";
 
 export const PAPEIS: Record<PapelDeIa, { rotulo: string; explicacao: string }> = {
+  apoiar: {
+    rotulo: "Apoiar a equipe",
+    explicacao: "Ajudar quem trabalha no CRM a pensar e produzir sem sair da tela atual.",
+  },
   atender: {
     rotulo: "Atender o cliente",
     explicacao: "Escrever o que o cliente lê e agir no funil durante a conversa.",
@@ -154,6 +159,22 @@ export interface PontoDeIa {
 }
 
 export const PONTOS_DE_IA: readonly PontoDeIa[] = [
+  {
+    id: "general_copilot",
+    rotulo: "Conversar com o assistente geral",
+    oQueFaz:
+      "Responde perguntas internas da equipe no painel lateral, usando a IA escolhida em cada conversa.",
+    papel: "apoiar",
+    exige: {},
+    emissor: "app/api/v1/ai/copilot/route.ts",
+    sintomaDeFalha:
+      "A equipe abre o painel lateral, envia uma pergunta e fica sem resposta.",
+    fixo: {
+      razao:
+        "Quem usa escolhe GPT ou Gemini dentro do próprio chat; por isso este ponto não tem um único modelo para configurar aqui.",
+    },
+    registraEm: "llm_calls",
+  },
   // ─────────────────────────── Atender o cliente ───────────────────────────
   {
     id: "agent_turn",

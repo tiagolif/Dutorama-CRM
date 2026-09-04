@@ -735,6 +735,24 @@ GitHub dispara no horário é do GitHub.
 
 ---
 
+## J20 — Pedir ajuda à IA sem sair do CRM `[P1]`
+
+| # | Caso | Expectativa |
+|---|------|-------------|
+| J20.1 | Abrir o botão de IA ao lado do sino em qualquer tela autenticada | painel abre pela direita e a tela atual permanece visível |
+| J20.2 | Empresa com GPT e Gemini validados | seletor oferece os dois provedores, sem expor id ou segredo da credencial |
+| J20.3 | Escolher Gemini e enviar uma pergunta | resposta aparece no painel identificada como Gemini; a chamada usa a credencial Google da organização ativa |
+| J20.4 | Trocar para GPT e continuar | a nova pergunta usa GPT explicitamente; o sistema não troca provedor sozinho |
+| J20.5 | Pressionar Enter / Shift+Enter | Enter envia; Shift+Enter permite escrever em mais de uma linha |
+| J20.6 | Empresa sem credencial validada | campo fica bloqueado e aparece o link para Credenciais de IA |
+| J20.7 | Pedir para alterar um cadastro ou enviar mensagem | o assistente orienta, mas não executa nem afirma que executou; nenhuma ferramenta do CRM chega ao modelo |
+| J20.8 | Chamada recusada por saldo, limite ou credencial | erro compreensível aparece no próprio painel e a tela atual continua utilizável |
+
+Prova automatizada: `components/shell/GeneralAiCopilot.test.tsx`,
+`app/api/v1/ai/copilot/route.test.ts` e `lib/ai/copilot/modelo.test.ts`.
+Prova visual em instalação fresca: pendente até a branch ser publicada num
+ambiente com uma credencial real de cada provedor.
+
 ## J7 — Exploração completa `[P2]`
 
 Andar por TODAS as rotas navegáveis logado como admin e como agent: settings, contacts,
