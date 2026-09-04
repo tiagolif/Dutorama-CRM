@@ -401,6 +401,9 @@ export const AUDIT_ACTIONS = [
   "catalog_product.updated",
   "catalog_product.deleted",
   "catalog_product.imported",
+  // Pergunta enviada pelo assistente geral. O conteúdo NÃO entra no audit:
+  // a trilha guarda só provedor/modelo e aponta para a chamada já registrada.
+  "ai.general_copilot_asked",
 ] as const;
 
 /** Um código de auditoria. Derivado de `AUDIT_ACTIONS` — não redigite a lista. */

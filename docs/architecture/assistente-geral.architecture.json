@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Assistente geral — escolha explícita de GPT ou Gemini",
+    "subtitle": "painel global, credencial isolada por organização e nenhuma ferramenta de escrita",
+    "output": "assistente-geral.html",
+    "quality_profile": "standard"
+  },
+  "lanes": [
+    { "id": "interface", "label": "Interface autenticada" },
+    { "id": "borda", "label": "Borda HTTP" },
+    { "id": "decisao", "label": "Seleção segura" },
+    { "id": "execucao", "label": "Execução de IA" },
+    { "id": "dados", "label": "Dados e rastros" }
+  ],
+  "mainPath": ["topbar", "painel", "rota", "modelo", "runmodel", "provedor"],
+  "nodes": [
+    {
+      "id": "topbar",
+      "lane": "interface",
+      "col": 1,
+      "type": "frontend",
+      "label": "TopBar",
+      "sublabel": "botão global ao lado do sino"
+    },
+    {
+      "id": "painel",
+      "lane": "interface",
+      "col": 2,
+      "type": "frontend",
+      "label": "GeneralAiCopilot",
+      "sublabel": "painel lateral, GPT/Gemini e histórico somente em memória"
+    },
+    {
+      "id": "credenciaisui",
+      "lane": "interface",
+      "col": 3,
+      "type": "frontend",
+      "label": "Credenciais de IA",
+      "sublabel": "saída visível quando nenhuma opção validada existe"
+    },
+    {
+      "id": "rota",
+      "lane": "borda",
+      "col": 2,
+      "type": "api",
+      "label": "GET/POST /api/v1/ai/copilot",
+      "sublabel": "viewer+ · Zod · organization_id explícito"
+    },
+    {
+      "id": "auth",
+      "lane": "borda",
+      "col": 1,
+      "type": "security",
+      "label": "requireRole",
+      "sublabel": "sessão e organização ativa"
+    },
+    {
+      "id": "modelo",
+      "lane": "decisao",
+      "col": 2,
+      "type": "service",
+      "label": "montarOpcoesDoCopilot",
+      "sublabel": "uma opção validada por provedor; ids ficam no servidor"
+    },
+    {
+      "id": "registro",
+      "lane": "decisao",
+      "col": 3,
+      "type": "service",
+      "label": "PONTOS_DE_IA",
+      "sublabel": "purpose general_copilot visível e auditável"
+    },
+    {
+      "id": "runmodel",
+      "lane": "execucao",
+      "col": 2,
+      "type": "service",
+      "label": "runModelCall",
+      "sublabel": "orçamento e telemetria existentes; maxSteps 1; sem tools"
+    },
+    {
+      "id": "provedor",
+      "lane": "execucao",
+      "col": 3,
+      "type": "external",
+      "label": "OpenAI ou Google",
+      "sublabel": "somente o provedor escolhido recebe a pergunta"
+    },
+    {
+      "id": "credentials",
+      "lane": "dados",
+      "col": 1,
+      "type": "database",
+      "label": "ai_provider_credentials",
+      "sublabel": "ativa, validada e pertencente à organização"
+    },
+    {
+      "id": "llmcalls",
+      "lane": "dados",
+      "col": 2,
+      "type": "database",
+      "label": "llm_calls",
+      "sublabel": "uso, custo e falha da chamada"
+    },
+    {
+      "id": "audit",
+      "lane": "dados",
+      "col": 3,
+      "type": "database",
+      "label": "api_audit_log",
+      "sublabel": "ator, provedor e modelo; nunca o texto"
+    }
+  ],
+  "edges": [
+    { "id": "e1", "from": "topbar", "to": "painel", "label": "abre sem abandonar a tela" },
+    { "id": "e2", "from": "painel", "to": "rota", "label": "lista opções e envia pergunta" },
+    { "id": "e3", "from": "auth", "to": "rota", "label": "autoriza viewer na organização ativa" },
+    {
+      "id": "e4",
+      "from": "rota",
+      "to": "credentials",
+      "label": "select com organization_id, is_active e validated_at"
+    },
+    { "id": "e5", "from": "credentials", "to": "modelo", "label": "catálogo validado de modelos" },
+    {
+      "id": "e6",
+      "from": "modelo",
+      "to": "rota",
+      "label": "provedor, modelo e credentialId interno"
+    },
+    {
+      "id": "e7",
+      "from": "rota",
+      "to": "runmodel",
+      "label": "purpose general_copilot, histórico limitado e zero ferramentas"
+    },
+    {
+      "id": "e8",
+      "from": "registro",
+      "to": "runmodel",
+      "label": "o purpose passa pelo registro de pontos de IA"
+    },
+    {
+      "id": "e9",
+      "from": "runmodel",
+      "to": "provedor",
+      "label": "egresso protegido para a opção escolhida"
+    },
+    {
+      "id": "e10",
+      "from": "runmodel",
+      "to": "llmcalls",
+      "label": "registra uso, custo e desfecho"
+    },
+    {
+      "id": "e11",
+      "from": "rota",
+      "to": "audit",
+      "label": "ai.general_copilot_asked sem conteúdo"
+    },
+    {
+      "id": "e12",
+      "from": "rota",
+      "to": "painel",
+      "label": "resposta rotulada como GPT ou Gemini"
+    },
+    {
+      "id": "e13",
+      "from": "painel",
+      "to": "credenciaisui",
+      "label": "corrigir quando não há IA validada"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Não-ligação deliberada: o chat não recebe ferramentas do CRM",
+      "items": [
+        "não existe aresta do painel para contatos, conversas, funis ou envio de mensagens",
+        "a primeira versão orienta e escreve texto, mas nunca afirma que executou uma ação",
+        "qualquer futura escrita exigirá spec própria, confirmação humana, idempotência e auditoria do efeito"
+      ]
+    }
+  ]
+}
