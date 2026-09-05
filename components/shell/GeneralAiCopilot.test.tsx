@@ -15,8 +15,30 @@ beforeEach(() => {
   Element.prototype.releasePointerCapture = vi.fn();
 });
 
-describe("assistente geral no cabeçalho", () => {
-  it("abre pela lateral, permite escolher Gemini e envia a pergunta com esse provedor", async () => {
+describe("assistente geral lateral", () => {
+  it("abre como painel persistente, não modal, e só fecha pelo controle explícito", async () => {
+    const user = userEvent.setup();
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ data: [{ provider: "openai", rotulo: "GPT", model: "gpt-5-mini" }] }),
+    });
+
+    render(<GeneralAiCopilot />);
+    const painel = screen.getByTestId("general-ai-copilot");
+    expect(painel).toHaveAttribute("data-open", "false");
+
+    await user.click(screen.getByRole("button", { name: "Abrir assistente geral" }));
+    expect(painel).toHaveAttribute("data-open", "true");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    fireEvent.click(document.body);
+    expect(painel).toHaveAttribute("data-open", "true");
+
+    await user.click(screen.getByRole("button", { name: "Fechar assistente geral" }));
+    expect(painel).toHaveAttribute("data-open", "false");
+  });
+
+  it("permite escolher Gemini e envia a pergunta com esse provedor", async () => {
     const user = userEvent.setup();
     fetchMock
       .mockResolvedValueOnce({
