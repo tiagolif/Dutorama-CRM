@@ -1,5 +1,6 @@
 "use client";
 import type { ReactNode } from "react";
+import { GeneralAiCopilot } from "@/components/shell/GeneralAiCopilot";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopBar } from "@/components/shell/TopBar";
 import { useInboundMessageAlerts } from "@/hooks/notifications/useInboundMessageAlerts";
@@ -27,22 +28,15 @@ export function AppShell({ sidebarCollapsed, children }: AppShellProps) {
         PÁGINA INTEIRA para o lado em vez de rolar dentro da própria caixa, e o
         conteúdo sumia sem nada indicando que existia.
 
-        Medido em 390x844 no detalhe do agente, que tem seis abas: a página
-        estourava 476px na horizontal; com esta classe, 212px — o que sobra é o
-        cabeçalho, presente também em telas que não têm abas (a lista de agentes
-        estoura 236px). Isolado ancestral por ancestral: é este o que decide.
-      */}
-      {/*
-        Sem `md:ml-*`: a barra voltou a ocupar lugar na linha (ver o comentário
-        em `Sidebar.tsx`), então o que sobra para esta coluna é exatamente o que
-        ela não usou. A margem existia para compensar uma barra `fixed`, e era a
-        SEGUNDA medida da mesma coisa — a que discordava e deixava a barra por
-        cima da lista.
+        Isso também é o que permite ao Copilot ocupar uma coluna real à direita:
+        quando ele abre, esta coluna reduz de largura e o CRM continua utilizável
+        ao lado, em vez de ficar coberto por um modal.
       */}
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <TopBar />
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
+      <GeneralAiCopilot />
     </div>
   );
 }
