@@ -6,8 +6,12 @@ describe("modelo do assistente geral", () => {
   it("prefere os modelos econômicos de conversa que o provedor confirmou", () => {
     expect(escolherModeloDoCopilot("openai", ["gpt-4o", "gpt-5-mini"])).toBe("gpt-5-mini");
     expect(
-      escolherModeloDoCopilot("google", ["gemini-3-pro-image-preview", "gemini-2.5-flash"]),
-    ).toBe("gemini-2.5-flash");
+      escolherModeloDoCopilot("google", [
+        "gemini-3-pro-image-preview",
+        "gemini-2.5-flash",
+        "gemini-3.6-flash",
+      ]),
+    ).toBe("gemini-3.6-flash");
   });
 
   it("não oferece modelo de imagem, áudio ou embedding como chat", () => {
@@ -36,7 +40,7 @@ describe("modelo do assistente geral", () => {
       {
         id: "google",
         provider: "google",
-        models_available: ["gemini-2.5-flash"],
+        models_available: ["gemini-2.5-flash", "gemini-3.6-flash"],
         created_at: "2026-09-04T12:00:00Z",
       },
     ]);
@@ -51,7 +55,7 @@ describe("modelo do assistente geral", () => {
       {
         provider: "google",
         rotulo: "Gemini",
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         credentialId: "google",
       },
     ]);
