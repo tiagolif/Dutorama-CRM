@@ -25,6 +25,10 @@ if [[ ! -x node_modules/.bin/next ]]; then
   pnpm install --frozen-lockfile
 fi
 
+# O preview nunca reutiliza Supabase/segredos da VPS. Ele sobe uma instancia
+# Supabase local dentro do Codespace e gera .env.local ignorado pelo Git.
+bash scripts/workspace-supabase.sh
+
 autosync() {
   while true; do
     # Alteracoes locais em arquivos rastreados nunca sao sobrescritas.
