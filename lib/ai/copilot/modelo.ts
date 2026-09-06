@@ -19,7 +19,14 @@ export interface OpcaoDoCopilot {
 
 const PREFERIDOS: Record<ProvedorDoCopilot, readonly string[]> = {
   openai: ["gpt-5-mini", "gpt-4.1-mini", "gpt-4o-mini"],
-  google: ["gemini-2.5-flash", "gemini-flash-latest"],
+  // O discovery do Google pode continuar listando modelos que já não aceitam
+  // novas contas. Priorize os modelos estáveis atuais antes dos aliases/legados.
+  google: [
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-flash-latest",
+    "gemini-2.5-flash",
+  ],
 };
 
 const ROTULOS: Record<ProvedorDoCopilot, string> = {
