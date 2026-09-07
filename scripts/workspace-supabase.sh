@@ -113,10 +113,11 @@ if [[ -n "${CODESPACE_NAME:-}" ]]; then
   PUBLIC_SUPABASE_URL="https://${CODESPACE_NAME}-54321.${FORWARD_DOMAIN}"
   PUBLIC_APP_URL="https://${CODESPACE_NAME}-3000.${FORWARD_DOMAIN}"
 
-  # O navegador precisa falar com a API Supabase local. Esta instancia e efemera
-  # e contem apenas dados de teste. A porta e aberta somente no Codespace.
+  # O navegador precisa acessar tanto o preview Next (3000) quanto a API local
+  # do Supabase (54321). Essas portas pertencem somente ao Codespace efemero e
+  # contem dados de desenvolvimento. A VPS/Producao nao e alterada.
   if command -v gh >/dev/null 2>&1; then
-    gh codespace ports visibility 54321:public -c "$CODESPACE_NAME" >/dev/null 2>&1 || true
+    gh codespace ports visibility 3000:public 54321:public -c "$CODESPACE_NAME" >/dev/null 2>&1 || true
   fi
 fi
 
@@ -135,6 +136,7 @@ EOF
 chmod 600 .env.local
 
 echo "[workspace-supabase] Ambiente DEV pronto e isolado da producao."
+echo "[workspace-supabase] Preview web: porta 3000"
 echo "[workspace-supabase] API local: porta 54321"
 echo "[workspace-supabase] Banco local: porta 54322"
 echo "[workspace-supabase] .env.local gerado sem exibir credenciais."
