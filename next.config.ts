@@ -5,6 +5,17 @@ const codespacePreviewHost = process.env.CODESPACE_NAME
   ? `${process.env.CODESPACE_NAME}-3000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN ?? "app.github.dev"}`
   : null;
 
+const codespaceServerActionOrigins = codespacePreviewHost
+  ? [
+      codespacePreviewHost,
+      "localhost:3000",
+      "127.0.0.1:3000",
+      "*.app.github.dev",
+      "*.github.dev",
+      "*.githubpreview.dev",
+    ]
+  : [];
+
 /** Performance budget (EPIC-12 §S-12.05):
  *  - LCP < 2.5s p75
  *  - CLS < 0.1 p75
@@ -19,7 +30,14 @@ const nextConfig: NextConfig = {
   // Codespaces acessa o dev server por um reverse proxy. Liberamos somente o
   // host deste Codespace; na VPS CODESPACE_NAME não existe e nada muda.
   ...(codespacePreviewHost
-    ? { allowedDevOrigins: [codespacePreviewHost] }
+    ? {
+        allowedDevOrigins: [
+          codespacePreviewHost,
+          "*.app.github.dev",
+          "*.github.dev",
+          "*.githubpreview.dev",
+        ],
+      }
     : {}),
   /**
    * O `standalone` copia SÓ o que o file tracing detecta — e ele não detecta
@@ -53,7 +71,7 @@ const nextConfig: NextConfig = {
     ...(codespacePreviewHost
       ? {
           serverActions: {
-            allowedOrigins: [codespacePreviewHost],
+            allowedOrigins: codespaceServerActionOrigins,
           },
         }
       : {}),
