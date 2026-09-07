@@ -1,20 +1,19 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
-const codespacePreviewHost = process.env.CODESPACE_NAME
-  ? `${process.env.CODESPACE_NAME}-3000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN ?? "app.github.dev"}`
-  : null;
+const isDevelopment = process.env.NODE_ENV !== "production";
 
-const codespaceServerActionOrigins = codespacePreviewHost
-  ? [
-      codespacePreviewHost,
-      "localhost:3000",
-      "127.0.0.1:3000",
-      "*.app.github.dev",
-      "*.github.dev",
-      "*.githubpreview.dev",
-    ]
-  : [];
+// Em Codespaces o proxy pode reescrever host/origin de formas diferentes entre
+// requests. Nao dependemos de CODESPACE_NAME aqui: em desenvolvimento liberamos
+// apenas os dominios oficiais de preview do GitHub e os hosts locais. Em build /
+// runtime de producao esta excecao desaparece completamente.
+const devServerActionOrigins = [
+  "localhost:3000",
+  "127.0.0.1:3000",
+  "*.app.github.dev",
+  "*.github.dev",
+  "*.githubpreview.dev",
+];
 
 /** Performance budget (EPIC-12 §S-12.05):
  *  - LCP < 2.5s p75
@@ -27,12 +26,9 @@ const nextConfig: NextConfig = {
   // Na Vercel (VERCEL=1) fica desligado — Next 16.3 + adapter + standalone
   // quebra o onBuildComplete com ENOENT next-server.js.nft.json (#96646).
   output: process.env.VERCEL ? undefined : "standalone",
-  // Codespaces acessa o dev server por um reverse proxy. Liberamos somente o
-  // host deste Codespace; na VPS CODESPACE_NAME não existe e nada muda.
-  ...(codespacePreviewHost
+  ...(isDevelopment
     ? {
         allowedDevOrigins: [
-          codespacePreviewHost,
           "*.app.github.dev",
           "*.github.dev",
           "*.githubpreview.dev",
@@ -68,10 +64,10 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react", "lucide-react", "date-fns"],
-    ...(codespacePreviewHost
+    ...(isDevelopment
       ? {
           serverActions: {
-            allowedOrigins: codespaceServerActionOrigins,
+            allowedOrigins: devServerActionOrigins,
           },
         }
       : {}),
