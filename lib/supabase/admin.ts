@@ -24,7 +24,13 @@ let _admin: SupabaseClient | null = null;
 export function createAdminClient(): SupabaseClient {
   if (_admin) return _admin;
 
-  _admin = createSupabaseClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+  // Codespaces expõe uma URL pública para o browser, mas chamadas administrativas
+  // server-side não devem atravessar o proxy de portas. A variável é opcional e
+  // só é gerada no ambiente DEV; produção continua usando a URL pública normal.
+  const supabaseServerUrl =
+    process.env.SUPABASE_INTERNAL_URL?.trim() || env.NEXT_PUBLIC_SUPABASE_URL;
+
+  _admin = createSupabaseClient(supabaseServerUrl, env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
