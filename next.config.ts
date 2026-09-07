@@ -1,6 +1,10 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
+const codespacePreviewHost = process.env.CODESPACE_NAME
+  ? `${process.env.CODESPACE_NAME}-3000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN ?? "app.github.dev"}`
+  : null;
+
 /** Performance budget (EPIC-12 §S-12.05):
  *  - LCP < 2.5s p75
  *  - CLS < 0.1 p75
@@ -12,6 +16,11 @@ const nextConfig: NextConfig = {
   // Na Vercel (VERCEL=1) fica desligado — Next 16.3 + adapter + standalone
   // quebra o onBuildComplete com ENOENT next-server.js.nft.json (#96646).
   output: process.env.VERCEL ? undefined : "standalone",
+  // Codespaces acessa o dev server por um reverse proxy. Liberamos somente o
+  // host deste Codespace; na VPS CODESPACE_NAME não existe e nada muda.
+  ...(codespacePreviewHost
+    ? { allowedDevOrigins: [codespacePreviewHost] }
+    : {}),
   /**
    * O `standalone` copia SÓ o que o file tracing detecta — e ele não detecta
    * tudo de `@swc/helpers`.
@@ -41,6 +50,13 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react", "lucide-react", "date-fns"],
+    ...(codespacePreviewHost
+      ? {
+          serverActions: {
+            allowedOrigins: [codespacePreviewHost],
+          },
+        }
+      : {}),
   },
   images: {
     // O app não usa next/image de fato (só <img> raw); desligar o otimizador
@@ -108,7 +124,6 @@ export default withSentryConfig(nextConfig, {
   webpack: {
     // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
     // See the following for more information:
-    // https://docs.sentry.io/product/crons/
     // https://vercel.com/docs/cron-jobs
     automaticVercelMonitors: true,
 
