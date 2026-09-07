@@ -13,7 +13,14 @@ import { env } from "@/lib/env";
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+  // Em ambientes com reverse proxy (ex.: GitHub Codespaces), o navegador
+  // precisa da URL pública encaminhada, mas o código server-side deve falar
+  // diretamente com o Supabase local. Em produção essa variável não existe e
+  // o comportamento permanece exatamente o mesmo.
+  const supabaseServerUrl =
+    process.env.SUPABASE_INTERNAL_URL?.trim() || env.NEXT_PUBLIC_SUPABASE_URL;
+
+  return createServerClient(supabaseServerUrl, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
