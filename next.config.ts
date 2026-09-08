@@ -1,6 +1,15 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
+const codespaceDevOrigins = [
+  "localhost:3000",
+  "127.0.0.1:3000",
+  "*.app.github.dev",
+  "*.github.dev",
+  "*.githubpreview.dev",
+];
+const enableCodespaceDev = process.env.NODE_ENV !== "production";
+
 /** Performance budget (EPIC-12 §S-12.05):
  *  - LCP < 2.5s p75
  *  - CLS < 0.1 p75
@@ -12,6 +21,7 @@ const nextConfig: NextConfig = {
   // Na Vercel (VERCEL=1) fica desligado — Next 16.3 + adapter + standalone
   // quebra o onBuildComplete com ENOENT next-server.js.nft.json (#96646).
   output: process.env.VERCEL ? undefined : "standalone",
+  ...(enableCodespaceDev ? { allowedDevOrigins: codespaceDevOrigins } : {}),
   /**
    * O `standalone` copia SÓ o que o file tracing detecta — e ele não detecta
    * tudo de `@swc/helpers`.
@@ -41,6 +51,13 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react", "lucide-react", "date-fns"],
+    ...(enableCodespaceDev
+      ? {
+          serverActions: {
+            allowedOrigins: codespaceDevOrigins,
+          },
+        }
+      : {}),
   },
   images: {
     // O app não usa next/image de fato (só <img> raw); desligar o otimizador
