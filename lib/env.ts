@@ -197,10 +197,12 @@ const schema = z.object({
    */
   SUPABASE_DB_ADMIN_URL: z.string().optional().default(""),
 
-  // WAHA
-  WAHA_API_BASE_URL: required("WAHA_API_BASE_URL"),
-  WAHA_API_KEY: required("WAHA_API_KEY"),
-  WAHA_WEBHOOK_BASE_URL: required("WAHA_WEBHOOK_BASE_URL"),
+  // WAHA — opcional no Dutorama: a operação usa só o canal oficial da Meta
+  // (Cloud API em coexistência). Vazio = canal WAHA indisponível; a tela de
+  // Conexões, o health e o worker já tratam "não configurado" sem derrubar o app.
+  WAHA_API_BASE_URL: z.string().optional().default(""),
+  WAHA_API_KEY: z.string().optional().default(""),
+  WAHA_WEBHOOK_BASE_URL: z.string().optional().default(""),
   // Segredo com que o WAHA assina os webhooks. O compose já o entrega ao
   // contêiner do WAHA; o app precisa dele para CONFERIR a assinatura — e não o
   // declarava aqui, então nunca teve como verificar nada.
@@ -299,9 +301,11 @@ const schema = z.object({
   // cada chamada — nunca por `env.`, para a troca na tela valer na hora.
   ZERNIO_PLATFORM_API_KEY: z.string().optional().default(""),
 
-  // Upstash Redis
-  UPSTASH_REDIS_REST_URL: required("UPSTASH_REDIS_REST_URL"),
-  UPSTASH_REDIS_REST_TOKEN: required("UPSTASH_REDIS_REST_TOKEN"),
+  // Upstash Redis — opcional no Dutorama. Vazio = rate limit e debounce caem
+  // no fallback em memória (`validarConfigRedisRest` → "nao_configurado"), que
+  // basta para o ambiente de testes; para produção use o plano grátis do Upstash.
+  UPSTASH_REDIS_REST_URL: z.string().optional().default(""),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional().default(""),
 
   // AI providers — env-gated. Worker no-ops with skip="ai_gateway_key_missing"
   // when AI_GATEWAY_API_KEY is absent, so production boot must not be fatal.
