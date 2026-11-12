@@ -10,6 +10,10 @@
 import { z } from "zod";
 
 import { RETENCAO_TETO_DIAS } from "@/lib/retencao/politica";
+import { preencherVariaveisDerivadas } from "@/lib/env-derivadas";
+
+// Dutorama: completa as variáveis que a integração Supabase ↔ Vercel não entrega.
+preencherVariaveisDerivadas();
 
 const isProd = process.env.NODE_ENV === "production";
 
