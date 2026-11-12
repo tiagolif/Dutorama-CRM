@@ -340,7 +340,7 @@ export async function startWorker(
   // Watchdog de sessão (4A-2): reconcilia channel_sessions×WAHA + redrive de
   // queued. Liga só com as credenciais do WAHA no env (sem elas: warn + off).
   const sessionWatchdogLoop =
-    Boolean(env.WAHA_API_BASE_URL) && Boolean(env.WAHA_API_KEY)
+    env.WAHA_API_BASE_URL && env.WAHA_API_KEY
       ? runSessionWatchdogLoop(
           pool,
           {
