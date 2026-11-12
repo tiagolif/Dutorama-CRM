@@ -60,6 +60,13 @@ cifradas na sessão — não vão para variável de ambiente.
 **Nunca commitar valores secretos.** As chaves de criptografia não podem mudar depois que houver
 dados cifrados no banco.
 
+## Instalação
+
+Num Codespace do repositório (4 núcleos), rode `bash scripts/dutorama-setup.sh`. Ele gera as chaves,
+aplica o schema no projeto Supabase `dutorama-crm` (sa-east-1), cadastra as variáveis na Vercel,
+publica e cria o dono. Você só digita a senha do banco, o login do CRM e aprova os logins do
+Supabase e da Vercel. As chaves ficam em `/workspaces/.dutorama-secrets.env` — não apague.
+
 ## Fases
 
 1. **Base nova** a partir da versão atual do DeskcommCRM — esta branch.
