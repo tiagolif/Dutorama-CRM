@@ -264,6 +264,10 @@ export const PUBLIC_PATHS: RegExp[] = [
   // dois nomes de propósito: `/^\/legal/` deixaria qualquer sub-path futuro
   // nascer público de carona.
   /^\/legal\/(terms|privacy)$/,
+  // Dutorama: a página pública da empresa (`public/empresa.html`), que a
+  // verificação de empresa da Meta abre sem sessão para conferir nome, CNPJ e
+  // contato. Arquivo estático: não lê banco nem sessão.
+  /^\/empresa\.html$/,
 ];
 
 export function isPublicPath(pathname: string): boolean {
