@@ -189,7 +189,7 @@ describe("a sétima cópia não nasce", () => {
       motivo: "nome do NÚMERO no canal oficial da Meta, não de contato",
     },
     {
-      arquivo: "app/api/v1/channels/official/route.ts",
+      arquivo: "lib/channels/meta/conectar-oficial.ts",
       trecho: 'display_name: existente?.display_name || (validacao.verifiedName ?? "Canal oficial"),',
       motivo: "nome interno do CANAL oficial preservado ao salvar a credencial de novo, não de contato",
     },
