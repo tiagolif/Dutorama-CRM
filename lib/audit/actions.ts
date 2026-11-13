@@ -342,6 +342,12 @@ export const AUDIT_ACTIONS = [
   "channel.historico_import_resumed",
   "channel.historico_import_completed",
   "channel.historico_import_failed",
+  // Coexistência com o app WhatsApp Business (canal oficial): o pedido de
+  // sincronização feito na conexão, e cada pedaço do histórico que a Meta
+  // entregou — ou a recusa dele, quando o celular não autorizou (2593109).
+  "channel.coexistencia_conectada",
+  "channel.historico_meta_recebido",
+  "channel.historico_meta_recusado",
   "channel.reconnected",
   // Duas ações distintas de propósito: `deleted` apagou a linha (canal virgem),
   // `archived` só a escondeu porque conversas/mensagens ainda a referenciam.

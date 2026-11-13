@@ -648,6 +648,15 @@ const schema = z.object({
    */
   META_WEBHOOK_BASE_URL: z.string().optional().default(""),
   /**
+   * Coexistência (Embedded Signup com o app WhatsApp Business): o id do App da
+   * Meta e o `config_id` da configuração de "Login do Facebook para Empresas".
+   * Os dois são PÚBLICOS (vão ao browser para abrir a janela da Meta) e opcionais:
+   * vazios, a tela simplesmente não oferece o botão. O App Secret continua só no
+   * servidor (`lib/channels/meta/app.ts`).
+   */
+  META_APP_ID: z.string().optional().default(""),
+  META_EMBEDDED_SIGNUP_CONFIG_ID: z.string().optional().default(""),
+  /**
    * Base (host) da Graph API do canal oficial, e a do eixo de anúncio (#817).
    *
    * `optional().default("")` e NÃO validada como URL aqui, por dois motivos

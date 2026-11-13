@@ -37,7 +37,14 @@ import {
   MOTIVO_DO_CONTRATO_VIOLADO,
   registrarRecusaDoWebhookMeta,
 } from "@/lib/channels/meta/recusa-do-webhook";
-import { parseMetaWebhook, verificationChallenge, verifyMetaSignature } from "@/lib/channels/meta/webhook";
+import {
+  parseMetaWebhook,
+  verificationChallenge,
+  verifyMetaSignature,
+  type HistoryMessageEvent,
+} from "@/lib/channels/meta/webhook";
+import { historicoDaRecebida, ingestMetaHistorico } from "@/lib/channels/meta/historico";
+import { audit } from "@/lib/audit";
 import { statusUpdate } from "@/lib/channels/meta/status-update";
 import {
   ingestMetaAppContactSync,
@@ -196,7 +203,57 @@ export async function POST(req: NextRequest, ctx: RouteCtx): Promise<NextRespons
   let puladosPorTitularApagado = 0;
   let puladosPorContatoAnonimizado = 0;
 
+  // ── Coexistência: o HISTÓRICO do app entra em lote, antes do resto ───────
+  //
+  // As conversas antigas (`history`) e a mídia delas (que a Meta manda depois
+  // por `messages`, com `history_context`) NÃO passam pelo caminho da recebida:
+  // seriam seis meses acordando agente, abrindo demanda e contando como não
+  // lidas. Quem grava é `ingestMetaHistorico`, sem efeito nenhum de mensagem nova.
+  const daWabaDaSessao = (e: { wabaId: string }) =>
+    !(session.wabaId && e.wabaId && e.wabaId !== session.wabaId);
+  const doHistorico: HistoryMessageEvent[] = [];
   for (const e of eventos) {
+    if (!daWabaDaSessao(e)) continue;
+    if (e.kind === "history_message") doHistorico.push(e);
+    else if (e.kind === "inbound_message" && e.historico) {
+      const h = historicoDaRecebida(e);
+      if (h) doHistorico.push(h);
+    }
+  }
+  if (doHistorico.length > 0) {
+    const conta = await ingestMetaHistorico(admin, doHistorico, { organizationId: session.organizationId });
+    desfechos.push(
+      `historico:gravadas=${conta.gravadas},existentes=${conta.existentes},midias=${conta.midiasCompletadas},ignoradas=${conta.ignoradas},falhas=${conta.falhas}`,
+    );
+    logger.info("[meta.historico] lote do histórico do app", {
+      request_id: requestId,
+      organization_id: session.organizationId,
+      ...conta,
+    });
+  }
+  for (const e of eventos) {
+    if (e.kind !== "history_chunk" || !daWabaDaSessao(e)) continue;
+    // Um registro por pedaço: é o que diz se a importação andou, terminou
+    // (fase 2 com progresso 100) ou foi RECUSADA no celular (2593109).
+    await audit({
+      action: e.erro ? "channel.historico_meta_recusado" : "channel.historico_meta_recebido",
+      organizationId: session.organizationId,
+      resourceType: "channel_session",
+      requestId,
+      metadata: {
+        phone_number_id: e.phoneNumberId,
+        fase: e.phase,
+        pedaco: e.chunkOrder,
+        progresso: e.progress,
+        mensagens: e.mensagens,
+        ...(e.erro ? { erro_codigo: e.erro.code, erro: e.erro.motivo } : {}),
+      },
+    });
+  }
+
+  for (const e of eventos) {
+    if (e.kind === "history_message" || e.kind === "history_chunk") continue;
+    if (e.kind === "inbound_message" && e.historico) continue;
     // O evento chega carimbado com a WABA; se não for a desta sessão, ignoramos.
     // Confiar no `entry.id` para escolher a org seria aceitar o corpo como fonte.
     if (session.wabaId && e.wabaId && e.wabaId !== session.wabaId) continue;

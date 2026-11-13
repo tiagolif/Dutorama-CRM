@@ -137,6 +137,15 @@ export interface InboundMessageEvent {
    * leitura é de `extrairAtribuicaoMeta`. Opcional porque só a ingestão o lê.
    */
   referral?: unknown;
+  /**
+   * Coexistência: a mensagem é do HISTÓRICO do app (traz `history_context`). A
+   * Meta entrega a mídia das conversas antigas por este mesmo campo `messages`,
+   * depois do `history` — e ela não pode acordar agente, abrir demanda nem
+   * contar como não lida. A rota a desvia para `ingestMetaHistorico`.
+   */
+  historico?: boolean;
+  /** `metadata.display_phone_number` só com dígitos — o NOSSO número. */
+  businessNumber?: string | null;
 }
 
 /** Status de entrega de uma mensagem que ENVIAMOS (sent/delivered/read/failed). */
@@ -243,7 +252,57 @@ export interface ReactionEvent {
   sentAt: Date;
 }
 
+/**
+ * Uma mensagem das conversas ANTERIORES à conexão, entregue UMA vez pela Meta no
+ * campo `history` depois que o número entra em coexistência e a instalação pede
+ * a sincronização (`lib/channels/meta/coexistencia.ts`).
+ *
+ * `threadId` é o número do CLIENTE (a conversa); `from` é o cliente OU o próprio
+ * número da empresa — é isso que decide a direção. Grupo não vem (a Meta exclui).
+ * Mídia vem como `media_placeholder` sem conteúdo; o arquivo, quando existe (só
+ * dos últimos 14 dias), chega depois em `messages` com `history_context`.
+ */
+export interface HistoryMessageEvent {
+  kind: "history_message";
+  wabaId: string;
+  phoneNumberId: string;
+  /** Dígitos do NOSSO número (`metadata.display_phone_number`). */
+  businessNumber: string | null;
+  threadId: string;
+  externalId: string;
+  from: string;
+  sentAt: Date;
+  /** Tipo já no vocabulário do CHECK de `messages.type`. */
+  type: string;
+  text: string | null;
+  sharedContact?: SharedContact | null;
+  media: { id: string; url: string | null; mime: string | null; voice: boolean; filename?: string | null } | null;
+  /** `media_placeholder`: havia mídia, e o arquivo talvez chegue depois. */
+  placeholder: boolean;
+  /** `history_context.status` — SENT, DELIVERED, READ, PLAYED, ERROR, PENDING. */
+  status: string | null;
+}
+
+/**
+ * Um pedaço do histórico (ou a recusa dele). Serve para o REGISTRO: o andamento
+ * (`phase` 0..2, `progress` 0..100) e, quando o dono do celular não autorizou
+ * compartilhar as conversas, o erro 2593109 — sem ele a importação "não veio"
+ * sem ninguém saber por quê.
+ */
+export interface HistoryChunkEvent {
+  kind: "history_chunk";
+  wabaId: string;
+  phoneNumberId: string;
+  phase: number | null;
+  chunkOrder: number | null;
+  progress: number | null;
+  mensagens: number;
+  erro: { code: number | null; motivo: string } | null;
+}
+
 export type MetaWebhookEvent =
+  | HistoryMessageEvent
+  | HistoryChunkEvent
   | TemplateStatusEvent
   | MessageStatusEvent
   | InboundMessageEvent
@@ -290,6 +349,68 @@ function textoDoClique(raw: Record<string, unknown>, tipo: string): string | nul
   const i = raw.interactive as Record<string, unknown> | undefined;
   const r = (i?.button_reply ?? i?.list_reply) as Record<string, unknown> | undefined;
   return str(r?.title) ?? str(r?.id);
+}
+
+/** Só os dígitos; `null` quando não sobra nenhum. */
+function digitos(v: string | null): string | null {
+  const d = (v ?? "").replace(/\D/g, "");
+  return d.length > 0 ? d : null;
+}
+
+function numero(v: unknown): number | null {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+/**
+ * O conteúdo de UMA mensagem do histórico, já no vocabulário de `messages.type`.
+ * `null` = não vira linha (reação, que não é fala; ou payload sem id).
+ *
+ * Tipo que o CHECK do banco não conhece entra como texto com o nome do tipo entre
+ * colchetes: perder a linha esconderia que houve mensagem ali.
+ */
+function conteudoDoHistorico(raw: Record<string, unknown>): Pick<
+  HistoryMessageEvent,
+  "type" | "text" | "media" | "placeholder" | "sharedContact"
+> | null {
+  const tipo = str(raw.type) ?? "unknown";
+  if (tipo === "reaction") return null;
+  if (tipo === "media_placeholder") {
+    return { type: "text", text: "📎 Mídia (conversa antiga do app)", media: null, placeholder: true };
+  }
+  if (tipo === "text") {
+    return { type: "text", text: str((raw.text as Record<string, unknown> | undefined)?.body), media: null, placeholder: false };
+  }
+  if (tipo === "button" || tipo === "interactive") {
+    return { type: "text", text: textoDoClique(raw, tipo), media: null, placeholder: false };
+  }
+  if (tipo === "contacts") {
+    const sharedContact = parseMetaInboundContact(raw);
+    return { type: "contact", text: sharedContact?.name ?? null, sharedContact, media: null, placeholder: false };
+  }
+  if (tipo === "location") {
+    const l = objetoSimples(raw.location);
+    const partes = [str(l?.name), str(l?.address)].filter(Boolean);
+    return { type: "location", text: partes.length ? partes.join(" — ") : "📍 Localização", media: null, placeholder: false };
+  }
+  if (["image", "video", "audio", "document", "sticker"].includes(tipo)) {
+    const corpo = objetoSimples(raw[tipo]);
+    const id = str(corpo?.id);
+    return {
+      type: tipo,
+      text: str(corpo?.caption),
+      media: id
+        ? {
+            id,
+            url: str(corpo?.url),
+            mime: str(corpo?.mime_type),
+            voice: corpo?.voice === true,
+            filename: str(corpo?.filename),
+          }
+        : null,
+      placeholder: !id,
+    };
+  }
+  return { type: "text", text: `[${tipo}]`, media: null, placeholder: false };
 }
 
 /**
@@ -404,6 +525,9 @@ export function parseMetaWebhook(envelope: MetaWebhookEnvelope): MetaWebhookEven
                   }
                 : null,
             referral: raw.referral ?? null,
+            ...(raw.history_context !== undefined && raw.history_context !== null
+              ? { historico: true, businessNumber: digitos(str(meta.display_phone_number)) }
+              : {}),
           });
         }
         continue;
@@ -492,6 +616,60 @@ export function parseMetaWebhook(envelope: MetaWebhookEnvelope): MetaWebhookEven
             // `remove` vem sem nome de propósito — ver `AppContactSyncEvent`.
             name: str(contato.full_name) ?? str(contato.first_name),
             action: str(raw.action) ?? "add",
+          });
+        }
+        continue;
+      }
+      // Coexistência: as conversas ANTERIORES à conexão (`history`). Um pedaço
+      // por entrega; o pedaço pode ser só a recusa (erro 2593109). Ver
+      // `HistoryMessageEvent` e `HistoryChunkEvent`.
+      if (change.field === "history" && Array.isArray(v.history)) {
+        const meta = (v.metadata ?? {}) as Record<string, unknown>;
+        const phoneNumberId = str(meta.phone_number_id) ?? "";
+        const businessNumber = digitos(str(meta.display_phone_number));
+        for (const pedaco of v.history as Record<string, unknown>[]) {
+          const m = objetoSimples(pedaco.metadata);
+          const erros = Array.isArray(pedaco.errors) ? (pedaco.errors as Record<string, unknown>[]) : [];
+          let mensagens = 0;
+          for (const thread of Array.isArray(pedaco.threads) ? (pedaco.threads as Record<string, unknown>[]) : []) {
+            const threadId = digitos(str(thread.id));
+            if (!threadId) continue;
+            for (const raw of Array.isArray(thread.messages) ? (thread.messages as Record<string, unknown>[]) : []) {
+              const id = str(raw.id);
+              const from = digitos(str(raw.from));
+              if (!id || !from) continue; // payload capenga não vira linha meia-boca
+              const conteudo = conteudoDoHistorico(raw);
+              if (!conteudo) continue;
+              mensagens += 1;
+              out.push({
+                kind: "history_message",
+                wabaId,
+                phoneNumberId,
+                businessNumber,
+                threadId,
+                externalId: id,
+                from,
+                sentAt: new Date(Number(str(raw.timestamp) ?? "0") * 1000),
+                ...conteudo,
+                status: str(objetoSimples(raw.history_context)?.status),
+              });
+            }
+          }
+          const primeiroErro = erros[0];
+          out.push({
+            kind: "history_chunk",
+            wabaId,
+            phoneNumberId,
+            phase: numero(m?.phase),
+            chunkOrder: numero(m?.chunk_order),
+            progress: numero(m?.progress),
+            mensagens,
+            erro: primeiroErro
+              ? {
+                  code: numero(primeiroErro.code),
+                  motivo: str(primeiroErro.message) ?? str(primeiroErro.title) ?? "histórico recusado",
+                }
+              : null,
           });
         }
         continue;

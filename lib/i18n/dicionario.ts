@@ -7935,6 +7935,25 @@ export const DICIONARIO: Traducoes = {
   },
   "Validando com a Meta…": { es: "Validando con Meta…" },
   "Validar e conectar": { es: "Validar y conectar" },
+  "Conectar com o app WhatsApp Business": { es: "Conectar con la app WhatsApp Business" },
+  "O número continua funcionando no celular. Você escaneia um QR com o app WhatsApp Business e autoriza o compartilhamento das conversas — o CRM recebe os contatos e até 6 meses de histórico.":
+    {
+      es: "El número sigue funcionando en el celular. Escaneas un QR con la app WhatsApp Business y autorizas compartir las conversaciones: el CRM recibe los contactos y hasta 6 meses de historial.",
+    },
+  "Aguardando a janela da Meta…": { es: "Esperando la ventana de Meta…" },
+  "Não foi possível abrir a janela da Meta. Confira se o navegador não bloqueou pop-ups.": {
+    es: "No se pudo abrir la ventana de Meta. Verifica que el navegador no haya bloqueado las ventanas emergentes.",
+  },
+  "A conexão não foi concluída na janela da Meta. Nada foi alterado.": {
+    es: "La conexión no se completó en la ventana de Meta. No se cambió nada.",
+  },
+  "Contatos:": { es: "Contactos:" },
+  "Histórico:": { es: "Historial:" },
+  "pedido enviado à Meta": { es: "solicitud enviada a Meta" },
+  "pedido enviado à Meta — as conversas chegam aos poucos": {
+    es: "solicitud enviada a Meta: las conversaciones llegan poco a poco",
+  },
+  "não pedido": { es: "no solicitado" },
   "Canal conectado.": { es: "Canal conectado." },
   "Canal pausado.": { es: "Canal pausado." },
   "Canal reativado.": { es: "Canal reactivado." },

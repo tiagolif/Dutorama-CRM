@@ -209,12 +209,12 @@ describe("parser: smb_app_state_sync vira evento de contato", () => {
         typeof parseMetaWebhook
       >[0],
     );
-    // Um `field` que não tratamos (a #1632 fala em `history`; essa parte ficou
-    // fora de escopo) continua caindo fora de propósito, como todo evento
-    // desconhecido — recusar viraria re-entrega em loop.
+    // Um `field` que não tratamos continua caindo fora de propósito, como todo
+    // evento desconhecido — recusar viraria re-entrega em loop. (Era `history`
+    // até ele ganhar leitura própria: `tests/unit/meta-coexistencia-historico.test.ts`.)
     const outroField = {
       object: "whatsapp_business_account",
-      entry: [{ id: "waba-1", changes: [{ field: "history", value: { history: [{ id: "wamid.X" }] } }] }],
+      entry: [{ id: "waba-1", changes: [{ field: "account_alerts", value: { alerts: [{ id: "X" }] } }] }],
     };
 
     expect(semNumero).toEqual([]);

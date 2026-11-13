@@ -16,6 +16,7 @@ import {
 import { copyToClipboard } from "@/lib/clipboard";
 import { useT } from "@/hooks/i18n/useT";
 import { ChannelAiAccess } from "./ChannelAiAccess";
+import { ConectarCoexistencia } from "./ConectarCoexistencia";
 import { ParaIntegrar } from "./ParaIntegrar";
 
 /** Campo somente-leitura com botão de copiar — o que o operador cola na Meta. */
@@ -244,6 +245,8 @@ export function CanalOficialClient() {
           }
         />
       ) : null}
+
+      <ConectarCoexistencia />
 
       <Card className="p-4">
         <h2 className="font-medium">
