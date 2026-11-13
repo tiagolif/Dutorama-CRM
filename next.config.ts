@@ -94,6 +94,22 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.supabase.in" },
     ],
   },
+  // Dutorama: o domínio da empresa abre a página pública `public/empresa.html`
+  // na raiz. Precisa ser `beforeFiles`: o rewrite do vercel.json perde para a
+  // página `/` do App Router, e o domínio mostrava a página do CRM.
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/",
+          has: [{ type: "host", value: "tiagoseuprojeto.dpdns.org" }],
+          destination: "/empresa.html",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [
       {

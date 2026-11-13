@@ -5,17 +5,5 @@
   "buildCommand": "pnpm build",
   "regions": [
     "gru1"
-  ],
-  "rewrites": [
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "host",
-          "value": "tiagoseuprojeto.dpdns.org"
-        }
-      ],
-      "destination": "/empresa.html"
-    }
   ]
 }
