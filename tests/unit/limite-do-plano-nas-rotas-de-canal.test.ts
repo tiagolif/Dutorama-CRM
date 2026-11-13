@@ -18,7 +18,9 @@ const ler = (arquivo: string) => readFileSync(join(RAIZ, arquivo), "utf8");
 const ROTAS = [
   "app/api/v1/channel-sessions/route.ts",
   "app/api/v1/onboarding/whatsapp/session/route.ts",
-  "app/api/v1/channels/official/route.ts",
+  // As duas portas do canal oficial (token colado e coexistência) passam pelo
+  // mesmo miolo, e é ele que traduz a recusa.
+  "lib/channels/meta/conectar-oficial.ts",
   "app/api/v1/channels/partner/route.ts",
   "app/api/v1/channels/social/route.ts",
   "app/api/v1/channels/graph-partner/route.ts",

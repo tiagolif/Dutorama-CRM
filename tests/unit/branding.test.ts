@@ -1171,6 +1171,11 @@ const HOSTS_DECLARADOS: Record<string, EntradaDeHost> = {
     motivo:
       "agregador de bio-links: marca agregador sem fetch. Nunca chamado, nunca exibido.",
   },
+  "connect.facebook.net": {
+    categoria: "FORNECEDOR",
+    motivo:
+      "SDK JavaScript da Meta, carregado só no botão de coexistência (`components/connections/ConectarCoexistencia.tsx`) para abrir a janela oficial de cadastro do WhatsApp. É contrato da Meta, não escolha nossa.",
+  },
   "facebook.com": {
     categoria: "RECONHECIMENTO",
     motivo:
