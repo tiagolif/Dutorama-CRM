@@ -3,61 +3,445 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tiago Seu Projeto, Sua Casa — Projetos e móveis planejados</title>
-<meta name="description" content="Tiago Seu Projeto, Sua Casa — projetos de móveis planejados, reformas e atendimento pelo WhatsApp em Santa Catarina.">
+<title>Tiago Seu Projeto, Sua Casa — Móveis planejados, estofados e tecnologia</title>
+<meta name="description" content="Projetos de móveis planejados para cozinha, quarto, lavanderia, sala e escritório, estofados e soluções de tecnologia (sistemas, sites e automações). Atendimento em São Francisco do Sul e região, SC.">
+<meta property="og:title" content="Tiago Seu Projeto, Sua Casa">
+<meta property="og:description" content="Móveis planejados, estofados e tecnologia — do projeto 3D à montagem.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://images.unsplash.com/photo-1600684388091-627109f3cd60?w=1200&q=80&auto=format&fit=crop">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --tinta:#1d2a24; --verde:#3f5a45; --papel:#f6f4ef; --linha:#ddd8cc; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:var(--tinta); background:var(--papel); line-height:1.55; }
-  header { background:var(--verde); color:#fff; padding:48px 24px 40px; }
-  .caixa { max-width:760px; margin:0 auto; }
-  h1 { margin:0 0 8px; font-size:2rem; letter-spacing:-.01em; }
-  header p { margin:0; opacity:.9; font-size:1.1rem; }
-  main { padding:32px 24px 48px; }
-  section { background:#fff; border:1px solid var(--linha); border-radius:10px; padding:20px 24px; margin-bottom:16px; }
-  h2 { margin:0 0 10px; font-size:1.15rem; }
-  ul { margin:0; padding-left:20px; }
-  dl { margin:0; display:grid; grid-template-columns:max-content 1fr; gap:6px 16px; }
-  dt { font-weight:600; }
-  dd { margin:0; }
-  a { color:var(--verde); }
-  footer { text-align:center; font-size:.85rem; color:#5d655f; padding:0 24px 32px; }
+  :root{
+    --grafite:#1b1d1c; --grafite-2:#26292a; --tinta:#2a2724; --papel:#f7f3ec; --areia:#ece4d6;
+    --madeira:#a26a3c; --madeira-2:#c48a56; --verde:#40564a; --linha:#e2d9c9; --cinza:#6d6a63;
+    --raio:18px; --sombra:0 18px 40px -22px rgba(27,29,28,.45);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tinta);background:var(--papel);line-height:1.6;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  .caixa{width:min(1180px,92vw);margin:0 auto}
+  h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.12;margin:0;color:var(--grafite)}
+  h2{font-size:clamp(1.9rem,3.6vw,2.8rem);letter-spacing:-.01em}
+  .selo{display:inline-block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--madeira)}
+  .sub{color:var(--cinza);font-size:1.08rem;max-width:62ch}
+  section{padding:96px 0}
+  .botao{display:inline-flex;align-items:center;gap:.55rem;padding:.95rem 1.5rem;border-radius:999px;font-weight:600;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease,background .15s}
+  .botao:hover{transform:translateY(-1px)}
+  .botao-cheio{background:var(--madeira);color:#fff;box-shadow:0 10px 24px -12px rgba(162,106,60,.9)}
+  .botao-cheio:hover{background:#8f5c33}
+  .botao-linha{border:1.5px solid rgba(255,255,255,.7);color:#fff}
+  .botao-linha-escura{border:1.5px solid var(--grafite);color:var(--grafite)}
+  svg.ico{width:1.15em;height:1.15em;flex:none}
+
+  /* Topo */
+  header.topo{position:sticky;top:0;z-index:50;background:rgba(247,243,236,.92);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--linha)}
+  .topo .caixa{display:flex;align-items:center;justify-content:space-between;height:72px;gap:1rem}
+  .marca{display:flex;align-items:center;gap:.7rem;text-decoration:none}
+  .marca-sinal{width:40px;height:40px;border-radius:12px;background:var(--grafite);color:var(--madeira-2);display:grid;place-items:center;font-family:Fraunces,serif;font-weight:700;font-size:1.15rem}
+  .marca-nome{font-family:Fraunces,serif;font-weight:600;font-size:1.08rem;line-height:1.1;color:var(--grafite)}
+  .marca-nome small{display:block;font-family:Inter,sans-serif;font-weight:500;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza)}
+  nav.menu{display:flex;gap:1.6rem;align-items:center}
+  nav.menu a{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--tinta)}
+  nav.menu a:hover{color:var(--madeira)}
+  .menu .botao{padding:.6rem 1.1rem;font-size:.9rem}
+  .abrir-menu{display:none;background:none;border:0;padding:.4rem;cursor:pointer;color:var(--grafite)}
+
+  /* Abertura */
+  .abertura{position:relative;min-height:min(88vh,760px);display:flex;align-items:flex-end;color:#fff;padding:0;overflow:hidden}
+  .abertura img.fundo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .abertura::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,19,18,.15) 0%,rgba(18,19,18,.35) 45%,rgba(18,19,18,.86) 100%)}
+  .abertura .caixa{position:relative;z-index:1;padding:0 0 72px}
+  .abertura h1{color:#fff;font-size:clamp(2.4rem,5.6vw,4.4rem);max-width:15ch;letter-spacing:-.015em}
+  .abertura p{max-width:56ch;font-size:1.15rem;color:rgba(255,255,255,.88);margin:1.2rem 0 2rem}
+  .abertura .acoes{display:flex;flex-wrap:wrap;gap:.8rem}
+  .garantias{display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;margin-top:2.4rem;font-size:.95rem;color:rgba(255,255,255,.9)}
+  .garantias span{display:flex;align-items:center;gap:.5rem}
+  .garantias svg{color:var(--madeira-2)}
+
+  /* Três frentes */
+  .frentes{padding:0;margin-top:-1px;background:var(--grafite);color:#fff}
+  .frentes .caixa{display:grid;grid-template-columns:repeat(3,1fr)}
+  .frente{padding:34px 30px;border-right:1px solid rgba(255,255,255,.1);text-decoration:none;transition:background .2s}
+  .frente:last-child{border-right:0}
+  .frente:hover{background:var(--grafite-2)}
+  .frente b{display:block;font-family:Fraunces,serif;font-size:1.3rem;margin:.2rem 0 .3rem;color:#fff}
+  .frente span{color:rgba(255,255,255,.7);font-size:.95rem}
+  .frente i{font-style:normal;color:var(--madeira-2);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+
+  /* Ambientes */
+  .cabecalho{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-bottom:44px;flex-wrap:wrap}
+  .cabecalho h2{margin-top:.5rem}
+  .ambientes{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+  .ambiente{position:relative;border-radius:var(--raio);overflow:hidden;min-height:340px;color:#fff;display:flex;align-items:flex-end;box-shadow:var(--sombra);isolation:isolate}
+  .ambiente img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s ease;z-index:-2}
+  .ambiente::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(15,15,14,.85));z-index:-1}
+  .ambiente:hover img{transform:scale(1.05)}
+  .ambiente .texto{padding:26px}
+  .ambiente h3{color:#fff;font-size:1.6rem}
+  .ambiente p{margin:.4rem 0 0;color:rgba(255,255,255,.85);font-size:.96rem}
+  .ambiente ul{list-style:none;padding:0;margin:.8rem 0 0;display:flex;flex-wrap:wrap;gap:.4rem}
+  .ambiente li{font-size:.78rem;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);padding:.22rem .6rem;border-radius:999px}
+  .a-cozinha{grid-column:span 4;min-height:440px}
+  .a-quarto{grid-column:span 2;min-height:440px}
+  .a-lavanderia,.a-sala,.a-escritorio{grid-column:span 2}
+
+  /* Processo */
+  .processo{background:var(--areia)}
+  .passos{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:passo}
+  .passo{background:var(--papel);border:1px solid var(--linha);border-radius:var(--raio);padding:26px 22px;position:relative}
+  .passo::before{counter-increment:passo;content:"0" counter(passo);font-family:Fraunces,serif;font-size:2.2rem;color:var(--madeira);display:block;line-height:1;margin-bottom:.9rem}
+  .passo h3{font-size:1.15rem;margin-bottom:.4rem}
+  .passo p{margin:0;color:var(--cinza);font-size:.94rem}
+
+  /* Estofados */
+  .duas{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .mosaico{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:240px 240px;gap:14px}
+  .mosaico img{width:100%;height:100%;object-fit:cover;border-radius:var(--raio);box-shadow:var(--sombra)}
+  .mosaico img:first-child{grid-row:span 2}
+  .lista{list-style:none;padding:0;margin:1.6rem 0 2rem;display:grid;gap:.85rem}
+  .lista li{display:flex;gap:.8rem;align-items:flex-start}
+  .lista svg{color:var(--madeira);margin-top:.25rem}
+  .lista b{display:block;color:var(--grafite)}
+  .lista span{color:var(--cinza);font-size:.95rem}
+
+  /* Tecnologia */
+  .tecnologia{background:var(--grafite);color:#eae6df;position:relative;overflow:hidden}
+  .tecnologia h2,.tecnologia h3{color:#fff}
+  .tecnologia .sub{color:rgba(234,230,223,.75)}
+  .tecnologia .selo{color:var(--madeira-2)}
+  .servicos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+  .servico{background:var(--grafite-2);border:1px solid rgba(255,255,255,.08);border-radius:var(--raio);padding:30px 26px}
+  .servico .icone{width:48px;height:48px;border-radius:14px;background:rgba(196,138,86,.14);color:var(--madeira-2);display:grid;place-items:center;margin-bottom:1.1rem}
+  .servico h3{font-size:1.35rem;margin-bottom:.5rem}
+  .servico p{margin:0 0 1rem;color:rgba(234,230,223,.75);font-size:.96rem}
+  .servico ul{margin:0;padding-left:1.1rem;color:rgba(234,230,223,.85);font-size:.93rem;display:grid;gap:.3rem}
+  .faixa-tec{margin-top:40px;display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;background:linear-gradient(120deg,rgba(196,138,86,.18),rgba(64,86,74,.25));border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:30px}
+  .faixa-tec img{border-radius:14px;height:220px;width:100%;object-fit:cover}
+  .faixa-tec h3{font-size:1.5rem;margin-bottom:.6rem}
+  .faixa-tec p{margin:0 0 1.2rem;color:rgba(234,230,223,.8)}
+
+  /* Galeria */
+  .galeria{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:210px;gap:14px}
+  .galeria figure{margin:0;border-radius:14px;overflow:hidden;position:relative}
+  .galeria img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+  .galeria figure:hover img{transform:scale(1.05)}
+  .galeria figcaption{position:absolute;left:12px;bottom:12px;background:rgba(247,243,236,.92);color:var(--grafite);font-size:.78rem;font-weight:600;padding:.25rem .6rem;border-radius:999px}
+  .g-alta{grid-row:span 2}
+  .g-larga{grid-column:span 2}
+
+  /* Perguntas */
+  .perguntas{display:grid;gap:12px;max-width:860px}
+  details{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:18px 22px}
+  summary{cursor:pointer;font-weight:600;color:var(--grafite);list-style:none;display:flex;justify-content:space-between;gap:1rem}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:Fraunces,serif;font-size:1.4rem;line-height:1;color:var(--madeira)}
+  details[open] summary::after{content:"–"}
+  details p{margin:.8rem 0 0;color:var(--cinza)}
+
+  /* Contato */
+  .contato{background:var(--areia)}
+  .cartao-contato{display:grid;grid-template-columns:1.1fr .9fr;gap:0;background:var(--papel);border-radius:26px;overflow:hidden;box-shadow:var(--sombra)}
+  .cartao-contato .lado{padding:48px}
+  .cartao-contato .lado-escuro{background:var(--grafite);color:#eae6df}
+  .cartao-contato .lado-escuro h3{color:#fff;font-size:1.4rem;margin-bottom:1.2rem}
+  .dados{display:grid;gap:1rem;margin:0}
+  .dados dt{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--madeira-2);font-weight:600}
+  .dados dd{margin:.15rem 0 0;color:#eae6df}
+  .dados a{color:#fff}
+
+  footer{background:#141514;color:rgba(234,230,223,.7);font-size:.9rem;padding:40px 0}
+  footer .caixa{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+  footer a{color:rgba(234,230,223,.85)}
+
+  .flutuante{position:fixed;right:20px;bottom:20px;z-index:60;width:60px;height:60px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 12px 28px -10px rgba(0,0,0,.5)}
+  .flutuante svg{width:30px;height:30px}
+
+  .surge{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .surge.visivel{opacity:1;transform:none}
+
+  @media (max-width:980px){
+    nav.menu{position:fixed;inset:72px 0 auto 0;background:var(--papel);flex-direction:column;align-items:flex-start;padding:22px 4vw 28px;gap:1.1rem;border-bottom:1px solid var(--linha);transform:translateY(-130%);transition:transform .25s}
+    nav.menu.aberto{transform:none}
+    .abrir-menu{display:block}
+    .frentes .caixa{grid-template-columns:1fr}
+    .frente{border-right:0;border-bottom:1px solid rgba(255,255,255,.1)}
+    .ambientes{grid-template-columns:1fr 1fr}
+    .a-cozinha,.a-quarto,.a-lavanderia,.a-sala,.a-escritorio{grid-column:span 2;min-height:320px}
+    .passos{grid-template-columns:1fr 1fr}
+    .duas,.faixa-tec,.cartao-contato{grid-template-columns:1fr}
+    .servicos{grid-template-columns:1fr}
+    .galeria{grid-template-columns:1fr 1fr;grid-auto-rows:170px}
+    .cartao-contato .lado{padding:32px 26px}
+    section{padding:72px 0}
+  }
+  @media (max-width:560px){
+    .passos{grid-template-columns:1fr}
+    .mosaico{grid-template-rows:180px 180px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}.surge{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-whats" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.23 8.23 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.23 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.02 2.57.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.29Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.2 4.2L19 7"/></symbol>
+  <symbol id="i-codigo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/></symbol>
+  <symbol id="i-tela" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 5h18v11H3zM8 20h8M12 16v4"/></symbol>
+  <symbol id="i-raio" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></symbol>
+</svg>
+
+<header class="topo">
   <div class="caixa">
-    <h1>Tiago Seu Projeto, Sua Casa</h1>
-    <p>Projetos de móveis planejados, reformas e acompanhamento da obra — do orçamento à montagem.</p>
+    <a class="marca" href="#inicio" aria-label="Tiago Seu Projeto, Sua Casa — início">
+      <span class="marca-sinal">T</span>
+      <span class="marca-nome">Tiago Seu Projeto, Sua Casa<small>Planejados · Estofados · Tecnologia</small></span>
+    </a>
+    <button class="abrir-menu" aria-label="Abrir menu" aria-expanded="false"><svg class="ico" style="width:28px;height:28px"><use href="#i-menu"/></svg></button>
+    <nav class="menu" aria-label="Seções">
+      <a href="#planejados">Planejados</a>
+      <a href="#estofados">Estofados</a>
+      <a href="#tecnologia">Tecnologia</a>
+      <a href="#como-trabalho">Como trabalho</a>
+      <a href="#contato">Contato</a>
+      <a class="botao botao-cheio" href="https://wa.me/5547997507391?text=Ol%C3%A1%20Tiago%2C%20vim%20pelo%20site%20e%20quero%20um%20or%C3%A7amento." target="_blank" rel="noopener"><svg class="ico"><use href="#i-whats"/></svg>Orçamento</a>
+    </nav>
   </div>
 </header>
-<main class="caixa">
-  <section>
-    <h2>O que fazemos</h2>
-    <ul>
-      <li>Projetos de móveis planejados para cozinha, quarto, sala e escritório.</li>
-      <li>Orçamentos e acompanhamento de pedidos com fábricas parceiras.</li>
-      <li>Obras de alvenaria e pequenas reformas.</li>
-      <li>Atendimento a clientes pelo WhatsApp, com registro organizado de cada conversa e pedido.</li>
-    </ul>
+
+<main id="inicio">
+  <section class="abertura">
+    <img class="fundo" src="https://images.unsplash.com/photo-1600684388091-627109f3cd60?w=2000&q=80&auto=format&fit=crop" alt="Cozinha planejada com armários escuros foscos e piso de madeira">
+    <div class="caixa">
+      <span class="selo" style="color:var(--madeira-2)">São Francisco do Sul e região · SC</span>
+      <h1>Seu projeto pensado, sua casa do jeito certo.</h1>
+      <p>Projetos de móveis planejados para cozinha, quarto, lavanderia, sala e escritório, estofados para cada ambiente e tecnologia para quem quer vender e atender melhor.</p>
+      <div class="acoes">
+        <a class="botao botao-cheio" href="https://wa.me/5547997507391?text=Ol%C3%A1%20Tiago%2C%20quero%20um%20projeto%20de%20m%C3%B3veis%20planejados." target="_blank" rel="noopener"><svg class="ico"><use href="#i-whats"/></svg>Quero um projeto</a>
+        <a class="botao botao-linha" href="#planejados">Ver ambientes</a>
+      </div>
+      <div class="garantias">
+        <span><svg class="ico"><use href="#i-check"/></svg>Projeto 3D antes de fechar</span>
+        <span><svg class="ico"><use href="#i-check"/></svg>Medição no local</span>
+        <span><svg class="ico"><use href="#i-check"/></svg>Acompanhamento até a montagem</span>
+      </div>
+    </div>
   </section>
-  <section>
-    <h2>Dados da empresa</h2>
-    <dl>
-      <dt>Razão social</dt><dd>63.005.492 TIAGO CUNHA DE SOUZA</dd>
-      <dt>Nome comercial</dt><dd>Tiago Seu Projeto, Sua Casa</dd>
-      <dt>CNPJ</dt><dd>63.005.492/0001-28</dd>
-      <dt>Endereço</dt><dd>R. Florêncio Custódio Daniel, 590 — Iperoba, São Francisco do Sul/SC — CEP 89334-129</dd>
-      <dt>WhatsApp</dt><dd><a href="https://wa.me/5547997507391">(47) 99750-7391</a></dd>
-      <dt>E-mail</dt><dd><a href="mailto:tiagolif02@gmail.com">tiagolif02@gmail.com</a></dd>
-    </dl>
+
+  <div class="frentes">
+    <div class="caixa">
+      <a class="frente" href="#planejados"><i>01</i><b>Móveis planejados</b><span>Cozinha, quarto, lavanderia, sala e escritório sob medida.</span></a>
+      <a class="frente" href="#estofados"><i>02</i><b>Estofados</b><span>Sofás, poltronas e conjuntos para cada espaço.</span></a>
+      <a class="frente" href="#tecnologia"><i>03</i><b>Tecnologia</b><span>Sistemas, sites e automações para o seu negócio.</span></a>
+    </div>
+  </div>
+
+  <section id="planejados">
+    <div class="caixa">
+      <div class="cabecalho surge">
+        <div>
+          <span class="selo">Móveis planejados</span>
+          <h2>Cada ambiente com o projeto<br>que ele pede.</h2>
+        </div>
+        <p class="sub">Aproveitamento de cada centímetro, acabamentos escolhidos com você e a visualização em 3D antes de qualquer decisão.</p>
+      </div>
+      <div class="ambientes">
+        <article class="ambiente a-cozinha surge">
+          <img src="https://images.unsplash.com/photo-1565183928294-7063f23ce0f8?w=1400&q=80&auto=format&fit=crop" alt="Cozinha planejada com armários brancos e ilha escura" loading="lazy">
+          <div class="texto"><h3>Cozinha</h3><p>Paneleiros, torres quentes, ilhas e aéreos nivelados — tudo projetado em volta da sua rotina.</p>
+            <ul><li>Torre quente</li><li>Ilha e bancada</li><li>Iluminação em LED</li><li>Puxadores e frentes à escolha</li></ul></div>
+        </article>
+        <article class="ambiente a-quarto surge">
+          <img src="https://images.unsplash.com/photo-1631889993877-71e193bf79b8?w=1000&q=80&auto=format&fit=crop" alt="Quarto com cama e armário planejado" loading="lazy">
+          <div class="texto"><h3>Quarto</h3><p>Roupeiros, cabeceiras e quartos infantis com cada peça no lugar.</p>
+            <ul><li>Roupeiros</li><li>Infantil</li><li>Casal</li></ul></div>
+        </article>
+        <article class="ambiente a-lavanderia surge">
+          <img src="https://images.unsplash.com/photo-1682888818612-1c18ebecf3ec?w=1000&q=80&auto=format&fit=crop" alt="Lavanderia com pia, lavadora e secadora" loading="lazy">
+          <div class="texto"><h3>Lavanderia</h3><p>Armários para máquina, tanque e produtos, com tudo à mão.</p></div>
+        </article>
+        <article class="ambiente a-sala surge">
+          <img src="https://images.unsplash.com/photo-1597406462638-5700a53b53d8?w=1000&q=80&auto=format&fit=crop" alt="Sala com televisão sobre rack planejado" loading="lazy">
+          <div class="texto"><h3>Sala</h3><p>Painéis, racks e estantes que organizam e valorizam o espaço.</p></div>
+        </article>
+        <article class="ambiente a-escritorio surge">
+          <img src="https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=1000&q=80&auto=format&fit=crop" alt="Escritório com mesa branca e cadeira" loading="lazy">
+          <div class="texto"><h3>Escritório</h3><p>Home office e escritórios com mesa, armários e prateleiras sob medida.</p></div>
+        </article>
+      </div>
+    </div>
   </section>
-  <section>
-    <h2>Privacidade</h2>
-    <p>Os dados de clientes são usados só para atendimento, orçamento e entrega. Veja a
-      <a href="/legal/privacy">política de privacidade</a> e os <a href="/legal/terms">termos de uso</a>.</p>
+
+  <section class="processo" id="como-trabalho">
+    <div class="caixa">
+      <div class="cabecalho surge">
+        <div>
+          <span class="selo">Como trabalho</span>
+          <h2>Do primeiro contato<br>à montagem.</h2>
+        </div>
+        <p class="sub">Um caminho simples e transparente — você sabe o que acontece em cada etapa.</p>
+      </div>
+      <div class="passos">
+        <div class="passo surge"><h3>Conversa</h3><p>Você conta o que precisa pelo WhatsApp ou pessoalmente: ambiente, estilo e orçamento.</p></div>
+        <div class="passo surge"><h3>Medição</h3><p>Medidas tiradas no local para o projeto sair exato, sem adaptação na hora da montagem.</p></div>
+        <div class="passo surge"><h3>Projeto 3D</h3><p>Você vê o ambiente pronto, com cores, acabamentos e a lista de módulos.</p></div>
+        <div class="passo surge"><h3>Orçamento</h3><p>Proposta detalhada com prazos de entrega, frete e montagem descritos.</p></div>
+        <div class="passo surge"><h3>Montagem</h3><p>Acompanhamento do pedido até a entrega e a montagem final.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="estofados">
+    <div class="caixa duas">
+      <div class="mosaico surge">
+        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1000&q=80&auto=format&fit=crop" alt="Sofá de tecido verde" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1776186243368-50a3ed7cd200?w=700&q=80&auto=format&fit=crop" alt="Sofá bege texturizado com almofada" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1698936061086-2bf99c7b9fc5?w=700&q=80&auto=format&fit=crop" alt="Sofá em ambiente de sala" loading="lazy">
+      </div>
+      <div class="surge">
+        <span class="selo">Estofados</span>
+        <h2>Conforto que combina<br>com o projeto.</h2>
+        <p class="sub">Sofás, poltronas e conjuntos escolhidos para a medida e o estilo do seu ambiente — junto com o planejado ou separado.</p>
+        <ul class="lista">
+          <li><svg class="ico"><use href="#i-check"/></svg><div><b>Sofás retráteis, de canto e fixos</b><span>Modelos para salas pequenas e grandes.</span></div></li>
+          <li><svg class="ico"><use href="#i-check"/></svg><div><b>Tecidos e cores à escolha</b><span>Opções de revestimento conforme o catálogo de cada fábrica.</span></div></li>
+          <li><svg class="ico"><use href="#i-check"/></svg><div><b>Medida certa para o espaço</b><span>Conferência das medidas antes do pedido.</span></div></li>
+        </ul>
+        <a class="botao botao-linha-escura" href="https://wa.me/5547997507391?text=Ol%C3%A1%20Tiago%2C%20quero%20ver%20op%C3%A7%C3%B5es%20de%20estofados." target="_blank" rel="noopener"><svg class="ico"><use href="#i-whats"/></svg>Ver opções de estofados</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tecnologia" id="tecnologia">
+    <div class="caixa">
+      <div class="cabecalho surge" style="margin-bottom:0">
+        <div>
+          <span class="selo">Tecnologia</span>
+          <h2>Sistemas, sites e automações<br>para quem vende.</h2>
+        </div>
+        <p class="sub">Ferramentas feitas para a rotina de quem atende cliente todo dia — sem complicação e com o que realmente é usado.</p>
+      </div>
+      <div class="servicos">
+        <article class="servico surge">
+          <div class="icone"><svg class="ico" style="width:24px;height:24px"><use href="#i-codigo"/></svg></div>
+          <h3>Sistemas sob medida</h3>
+          <p>Organização de clientes, pedidos e vendas num só lugar.</p>
+          <ul><li>CRM com funil de vendas</li><li>Painéis de metas e acompanhamento</li><li>Integração com planilhas e sistemas de gestão</li></ul>
+        </article>
+        <article class="servico surge">
+          <div class="icone"><svg class="ico" style="width:24px;height:24px"><use href="#i-tela"/></svg></div>
+          <h3>Sites</h3>
+          <p>Páginas profissionais que apresentam o seu negócio e trazem contato.</p>
+          <ul><li>Site institucional e catálogo</li><li>Página de vendas e campanhas</li><li>Domínio, hospedagem e publicação</li></ul>
+        </article>
+        <article class="servico surge">
+          <div class="icone"><svg class="ico" style="width:24px;height:24px"><use href="#i-raio"/></svg></div>
+          <h3>Automações</h3>
+          <p>Menos trabalho repetitivo, mais tempo para vender.</p>
+          <ul><li>Atendimento pelo WhatsApp oficial</li><li>Agentes de IA para responder e qualificar</li><li>Lembretes, follow-ups e relatórios automáticos</li></ul>
+        </article>
+      </div>
+      <div class="faixa-tec surge">
+        <div>
+          <h3>Atendimento pelo WhatsApp com CRM</h3>
+          <p>Conversas, clientes e orçamentos organizados, com a equipe e a inteligência artificial trabalhando juntas no mesmo número.</p>
+          <a class="botao botao-cheio" href="https://wa.me/5547997507391?text=Ol%C3%A1%20Tiago%2C%20quero%20saber%20sobre%20sistemas%20e%20automa%C3%A7%C3%B5es." target="_blank" rel="noopener"><svg class="ico"><use href="#i-whats"/></svg>Falar sobre tecnologia</a>
+        </div>
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1000&q=80&auto=format&fit=crop" alt="Notebook com código na tela" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section id="inspiracao">
+    <div class="caixa">
+      <div class="cabecalho surge">
+        <div>
+          <span class="selo">Inspiração</span>
+          <h2>Ideias para o seu ambiente.</h2>
+        </div>
+        <p class="sub">Referências de estilos, cores e composições para começar a conversa do seu projeto.</p>
+      </div>
+      <div class="galeria">
+        <figure class="g-alta surge"><img src="https://images.unsplash.com/photo-1602028915047-37269d1a73f7?w=900&q=80&auto=format&fit=crop" alt="Cozinha com armários cinza e ilha branca" loading="lazy"><figcaption>Cozinha</figcaption></figure>
+        <figure class="g-larga surge"><img src="https://images.unsplash.com/photo-1588854337236-6889d631faa8?w=1200&q=80&auto=format&fit=crop" alt="Cozinha moderna com armários cinza e bancada de mármore" loading="lazy"><figcaption>Cozinha</figcaption></figure>
+        <figure class="surge"><img src="https://images.unsplash.com/photo-1668910232870-42793c9e8ec2?w=700&q=80&auto=format&fit=crop" alt="Quarto com portas brancas" loading="lazy"><figcaption>Quarto</figcaption></figure>
+        <figure class="surge"><img src="https://images.unsplash.com/photo-1774716925888-190de2471de2?w=700&q=80&auto=format&fit=crop" alt="Painel de TV branco moderno" loading="lazy"><figcaption>Sala</figcaption></figure>
+        <figure class="g-larga surge"><img src="https://images.unsplash.com/photo-1777896193454-8b4863264f0b?w=1200&q=80&auto=format&fit=crop" alt="Escritório iluminado com estantes e duas mesas" loading="lazy"><figcaption>Escritório</figcaption></figure>
+        <figure class="surge"><img src="https://images.unsplash.com/photo-1778731660255-215c9172e18d?w=700&q=80&auto=format&fit=crop" alt="Lavanderia moderna" loading="lazy"><figcaption>Lavanderia</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="caixa">
+      <div class="cabecalho surge">
+        <div><span class="selo">Dúvidas frequentes</span><h2>Antes de começar.</h2></div>
+      </div>
+      <div class="perguntas">
+        <details class="surge"><summary>Quanto tempo leva do projeto à montagem?</summary><p>Depende da fábrica e do tamanho do projeto. O prazo de entrega é informado no orçamento, antes de você fechar.</p></details>
+        <details class="surge"><summary>Vocês vão até a minha casa medir?</summary><p>Sim. A medição no local garante que o projeto saia na medida certa para o seu espaço.</p></details>
+        <details class="surge"><summary>Consigo ver como vai ficar antes de comprar?</summary><p>Sim. O projeto é apresentado em 3D, com cores, acabamentos e a lista de módulos.</p></details>
+        <details class="surge"><summary>Atendem quais cidades?</summary><p>São Francisco do Sul e região no litoral de Santa Catarina. Fale pelo WhatsApp para confirmar a sua cidade.</p></details>
+        <details class="surge"><summary>Os serviços de tecnologia são para qualquer empresa?</summary><p>Sim. Sistemas, sites e automações são feitos para comércios e prestadores de serviço de qualquer área.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="contato" id="contato">
+    <div class="caixa">
+      <div class="cartao-contato surge">
+        <div class="lado">
+          <span class="selo">Contato</span>
+          <h2 style="margin:.5rem 0 1rem">Vamos começar o seu projeto?</h2>
+          <p class="sub" style="margin-bottom:2rem">Mande uma mensagem com o ambiente e, se tiver, uma foto ou as medidas. A resposta vem pelo WhatsApp.</p>
+          <a class="botao botao-cheio" href="https://wa.me/5547997507391?text=Ol%C3%A1%20Tiago%2C%20vim%20pelo%20site%20e%20quero%20um%20or%C3%A7amento." target="_blank" rel="noopener"><svg class="ico"><use href="#i-whats"/></svg>Chamar no WhatsApp</a>
+        </div>
+        <div class="lado lado-escuro">
+          <h3>Tiago Seu Projeto, Sua Casa</h3>
+          <dl class="dados">
+            <div><dt>WhatsApp</dt><dd><a href="https://wa.me/5547997507391" target="_blank" rel="noopener">(47) 99750-7391</a></dd></div>
+            <div><dt>E-mail</dt><dd><a href="mailto:tiagolif02@gmail.com">tiagolif02@gmail.com</a></dd></div>
+            <div><dt>Endereço</dt><dd>R. Florêncio Custódio Daniel, 590 — Iperoba<br>São Francisco do Sul/SC — CEP 89334-129</dd></div>
+            <div><dt>Razão social</dt><dd>63.005.492 TIAGO CUNHA DE SOUZA<br>CNPJ 63.005.492/0001-28</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
-<footer>© Tiago Seu Projeto, Sua Casa — CNPJ 63.005.492/0001-28</footer>
+
+<footer>
+  <div class="caixa">
+    <span>© Tiago Seu Projeto, Sua Casa · CNPJ 63.005.492/0001-28</span>
+    <span><a href="/legal/privacy">Política de privacidade</a> · <a href="/legal/terms">Termos de uso</a></span>
+  </div>
+</footer>
+
+<a class="flutuante" href="https://wa.me/5547997507391?text=Ol%C3%A1%20Tiago%2C%20vim%20pelo%20site." target="_blank" rel="noopener" aria-label="Conversar no WhatsApp"><svg><use href="#i-whats"/></svg></a>
+
+<script>
+  (function () {
+    var botao = document.querySelector('.abrir-menu');
+    var menu = document.querySelector('nav.menu');
+    botao.addEventListener('click', function () {
+      var aberto = menu.classList.toggle('aberto');
+      botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+    });
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) { menu.classList.remove('aberto'); botao.setAttribute('aria-expanded', 'false'); }
+    });
+    var itens = document.querySelectorAll('.surge');
+    if (!('IntersectionObserver' in window)) { itens.forEach(function (el) { el.classList.add('visivel'); }); return; }
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('visivel'); obs.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    itens.forEach(function (el) { obs.observe(el); });
+  })();
+</script>
 </body>
 </html>
