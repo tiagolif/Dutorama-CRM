@@ -1,0 +1,96 @@
+# DUTORWORK — ROBÔ DO SANKHYA.
+#
+# Entra no Sankhya com o usuário e a senha dos Secrets (SANKHYA_USUARIO e
+# SANKHYA_SENHA) e roda a TAREFA escolhida abaixo (um arquivo .mjs em
+# scripts/dutorwork/).
+#
+# ⚠️ O repositório é PÚBLICO: qualquer pessoa vê o log e os artefatos deste
+# job. Por isso o log só leva sim/não, e tudo o que o robô guarda (pasta
+# `retrato/`) é CRIPTOGRAFADO com scripts/dutorwork/chave-publica.pem antes de
+# ser publicado. Sem a chave privada, o artefato é ilegível.
+#
+# ⚠️ Uma tentativa de login por execução, nunca em loop: senha errada repetida
+# pode bloquear o usuário no Sankhya.
+name: dutorwork-robo
+
+on:
+  push:
+    branches: [dutorwork/teste-login]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Um robô por vez: dois logins simultâneos do mesmo usuário são desnecessários.
+  group: dutorwork-robo
+  cancel-in-progress: false
+
+env:
+  TAREFA: explorar-vendas
+
+jobs:
+  robo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Conferir se os Secrets existem
+        env:
+          SANKHYA_USUARIO: ${{ secrets.SANKHYA_USUARIO }}
+          SANKHYA_SENHA: ${{ secrets.SANKHYA_SENHA }}
+        run: |
+          falta=""
+          [ -z "$SANKHYA_USUARIO" ] && falta="$falta SANKHYA_USUARIO"
+          [ -z "$SANKHYA_SENHA" ] && falta="$falta SANKHYA_SENHA"
+          if [ -n "$falta" ]; then
+            echo "::error::Faltam os Secrets:$falta. Cadastre em Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          echo "Secrets encontrados."
+
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/dutorwork
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar o navegador do robô
+        working-directory: scripts/dutorwork
+        run: |
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund playwright@1.64.1
+          npx playwright install --with-deps chromium
+
+      - name: Rodar a tarefa
+        working-directory: scripts/dutorwork
+        env:
+          SANKHYA_URL: https://lojasvaldir.sankhyacloud.com.br/mge/
+          SANKHYA_USUARIO: ${{ secrets.SANKHYA_USUARIO }}
+          SANKHYA_SENHA: ${{ secrets.SANKHYA_SENHA }}
+          SAIDA: retrato
+        run: node "$TAREFA.mjs"
+
+      - name: Criptografar o retrato
+        if: always()
+        working-directory: scripts/dutorwork
+        run: |
+          if [ ! -d retrato ]; then echo "Sem retrato."; exit 0; fi
+          tar czf retrato.tgz retrato && rm -rf retrato
+          openssl rand -hex 32 > chave.txt
+          openssl enc -aes-256-cbc -pbkdf2 -salt -in retrato.tgz -out retrato.tgz.enc -pass file:chave.txt
+          openssl pkeyutl -encrypt -pubin -inkey chave-publica.pem -pkeyopt rsa_padding_mode:oaep -in chave.txt -out chave.txt.enc
+          rm -f retrato.tgz chave.txt
+          ls -l retrato.tgz.enc chave.txt.enc
+
+      - name: Publicar só o arquivo criptografado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: retrato-criptografado
+          path: |
+            scripts/dutorwork/retrato.tgz.enc
+            scripts/dutorwork/chave.txt.enc
+          retention-days: 1
+          if-no-files-found: ignore
