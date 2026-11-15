@@ -19,7 +19,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  # write só para gravar o retrato CRIPTOGRAFADO no ramo dutorwork-retratos
+  # (o artefato do Actions não é alcançável de onde o retrato é lido).
+  contents: write
 
 concurrency:
   # Um robô por vez: dois logins simultâneos do mesmo usuário são desnecessários.
@@ -84,13 +86,17 @@ jobs:
           rm -f retrato.tgz chave.txt
           ls -l retrato.tgz.enc chave.txt.enc
 
-      - name: Publicar só o arquivo criptografado
+      - name: Entregar o arquivo criptografado no ramo dutorwork-retratos
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: retrato-criptografado
-          path: |
-            scripts/dutorwork/retrato.tgz.enc
-            scripts/dutorwork/chave.txt.enc
-          retention-days: 1
-          if-no-files-found: ignore
+        working-directory: scripts/dutorwork
+        run: |
+          if [ ! -f retrato.tgz.enc ]; then echo "Nada a entregar."; exit 0; fi
+          d=$(mktemp -d)
+          cp retrato.tgz.enc chave.txt.enc "$d/"
+          cd "$d"
+          git init -q -b dutorwork-retratos
+          git config user.name "dutorwork-robo"
+          git config user.email "dutorwork-robo@users.noreply.github.com"
+          git add . && git commit -qm "retrato criptografado ${GITHUB_RUN_ID}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" dutorwork-retratos
+          echo "Entregue no ramo dutorwork-retratos."
