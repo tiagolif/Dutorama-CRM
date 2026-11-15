@@ -1563,6 +1563,10 @@ export const AUDIT_ACTIONS = [
   // Metadata leva só contagens (recebidos, novos, sem_detalhe) e o período —
   // nenhum dado de cliente.
   "dutorwork.pedidos_recebidos",
+  // Alguém apertou "Checar" (metadata: período) e alguém marcou um pedido como
+  // confirmado/ignorado/novo (metadata: nunota e situação).
+  "dutorwork.checagem_pedida",
+  "dutorwork.pedido_situacao_alterada",
 ] as const;
 
 /** Um código de auditoria. Derivado de `AUDIT_ACTIONS` — não redigite a lista. */

@@ -196,6 +196,8 @@ describe("hubSections", () => {
       // #3933: a fila de ligações ativas, ao lado do histórico de chamadas. Só com o módulo ligado.
       "/app/cold-call",
       "/app/comandas",
+      // DutorWork (fork Dutorama): pedidos do Sankhya, ao lado do balcão.
+      "/app/dutorwork",
       "/app/cadencias",
       "/app/products",
       "/app/imports",

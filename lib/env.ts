@@ -140,6 +140,13 @@ const schema = z.object({
   DUTORWORK_ROBO_TOKEN: z.string().optional().default(""),
   /** Organização que recebe os pedidos do robô (uuid). Vazio = rota desligada. */
   DUTORWORK_ORGANIZATION_ID: z.string().optional().default(""),
+  /**
+   * Botão "Checar" do DutorWork: token do GitHub com permissão de Actions
+   * (escrita) no repositório do robô. Vazio = o botão responde 503.
+   */
+  DUTORWORK_GITHUB_TOKEN: z.string().optional().default(""),
+  DUTORWORK_GITHUB_REPO: z.string().optional().default("tiagolif/Dutorama-CRM"),
+  DUTORWORK_GITHUB_REF: z.string().optional().default("dutorama/base-v1.109.0"),
 
   // Laboratório local de extensões: origem HTTP exata em 127.0.0.1. O cliente
   // recusa a exceção se a URL do app não for loopback. Vazio mantém HTTPS público.

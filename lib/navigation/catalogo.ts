@@ -537,6 +537,19 @@ export const NAV_CATALOG = [
     modulo: "financeiro",
   },
   {
+    // DUTORWORK (fork Dutorama): os pedidos do Sankhya que o robô trouxe, para
+    // conferir antes de falar com o cliente. Mora no CRM, junto do dia a dia da
+    // venda, e pelo mesmo motivo das Comandas fica fora do sidebar: a um clique
+    // por CRM › Ver tudo em CRM e pelo ⌘K ("pedidos", "sankhya").
+    href: "/app/dutorwork",
+    label: "Pedidos do Sankhya",
+    description: "O que o robô trouxe do Painel do Vendedor, para conferir antes de falar com o cliente.",
+    icon: "Receipt",
+    group: "crm",
+    section: "O dia a dia da venda",
+    minRole: "viewer",
+  },
+  {
     // O catálogo financeiro: contas, formas de pagamento e plano de contas.
     //
     // Fica em "Sua empresa" pelo mesmo motivo dos tipos de agendamento — é onde

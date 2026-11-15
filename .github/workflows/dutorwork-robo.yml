@@ -18,7 +18,14 @@ on:
     branches: [dutorwork/teste-login]
     # Só quando o próprio robô muda: cada execução é um login no Sankhya.
     paths: [scripts/dutorwork/**, .github/workflows/dutorwork-robo.yml]
+  # O botão "Checar" do Dutorama (POST /api/v1/dutorwork/checar) dispara por aqui.
   workflow_dispatch:
+    inputs:
+      periodo:
+        description: "hoje | 7dias | mes"
+        type: choice
+        options: [hoje, 7dias, mes]
+        default: hoje
 
 permissions:
   # write só para gravar o retrato CRIPTOGRAFADO no ramo dutorwork-retratos
@@ -32,7 +39,8 @@ concurrency:
 
 env:
   TAREFA: ler-pedidos
-  PERIODO: 7dias
+  # Push (robô mudou) lê 7 dias; o botão Checar escolhe o período.
+  PERIODO: ${{ inputs.periodo || '7dias' }}
 
 jobs:
   robo:
