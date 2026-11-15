@@ -7,6 +7,27 @@ const URL = process.env.SANKHYA_URL;
 const USUARIO = process.env.SANKHYA_USUARIO;
 const SENHA = process.env.SANKHYA_SENHA;
 
+// Lê o texto visível de todos os frames, atravessando shadow DOM (o cartão de
+// login do Sankhya é um componente web e o innerText do body não o enxerga).
+async function textoVisivel(page) {
+  const partes = [];
+  for (const f of page.frames()) {
+    const t = await f.evaluate(() => {
+      const out = [];
+      const andar = (raiz) => {
+        for (const el of raiz.querySelectorAll("*")) {
+          if (el.shadowRoot) andar(el.shadowRoot);
+          if (el.children.length === 0 && el.textContent && el.getClientRects().length) out.push(el.textContent.trim());
+        }
+      };
+      andar(document);
+      return out.filter(Boolean).join(" · ");
+    }).catch(() => "");
+    if (t) partes.push(t);
+  }
+  return partes.join(" | ").replace(/\s+/g, " ").slice(0, 500) || "(nenhum texto)";
+}
+
 function relato(chave, valor) {
   process.stdout.write(`[dutorwork] ${chave}: ${valor}\n`);
 }
@@ -26,7 +47,8 @@ try {
 
   const senhaVisivel = page.locator('input[type="password"]:visible');
   const usuario = page.locator('input:not([type="password"]):not([type="hidden"]):not([type="checkbox"]):visible').first();
-  const prosseguir = page.getByRole("button", { name: /prosseguir|entrar|login/i }).first();
+  // Só "Prosseguir": "Entrar com Sankhya Pass" também casaria com /entrar/ e leva a outro login.
+  const prosseguir = page.getByRole("button", { name: /^\s*prosseguir\s*$/i }).first();
 
   await Promise.race([
     senhaVisivel.first().waitFor({ timeout: 45000 }),
@@ -44,6 +66,8 @@ try {
   // Passo 2: senha.
   await senhaVisivel.first().fill(SENHA);
   await prosseguir.click();
+  await page.waitForTimeout(2500);
+  relato("texto da tela 2,5 s depois da senha", await textoVisivel(page));
 
   await page.waitForURL(/system\.jsp/, { timeout: 60000 }).catch(() => {});
   await page.waitForTimeout(5000);
@@ -59,10 +83,8 @@ try {
   } else {
     // Ainda na tela de login: o aviso dali (senha errada, acesso bloqueado)
     // não traz dado de cliente, então pode ir para o log, curto.
-    const textos = [];
-    for (const f of page.frames()) textos.push(await f.locator("body").innerText().catch(() => ""));
-    const aviso = textos.join(" | ").replace(/\s+/g, " ").slice(0, 400);
-    relato("aviso na tela de login", aviso || "(nenhum texto)");
+    relato("senha ainda na tela", (await senhaVisivel.count()) ? "sim" : "não");
+    relato("texto da tela no fim", await textoVisivel(page));
   }
 } catch (erro) {
   relato("erro", String(erro && erro.message ? erro.message : erro).split("\n")[0].slice(0, 300));
