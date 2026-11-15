@@ -88,11 +88,21 @@ export async function framePainel(page, timeoutMs = 60000) {
   return null;
 }
 
-// Abre a aba "Painel do Vendedor" da barra superior do Sankhya (rótulo GWT).
+// Abre a aba "Painel do Vendedor" da barra superior do Sankhya. É um <li
+// class="AppItem" orig-title="..."> do GWT, que pode não contar como "visível"
+// para o Playwright; por isso o clique é forçado e, se falhar, disparado à mão.
 export async function abrirAbaPainel(page) {
-  const aba = page.locator(".gwt-Label", { hasText: /painel do vendedor -/i }).first();
-  const ok = await aba.isVisible().catch(() => false);
-  if (ok) await aba.click();
-  relato("aba Painel do Vendedor clicada", ok ? "sim" : "não");
-  return ok;
+  const aba = page.locator('li.AppItem[orig-title^="Painel do Vendedor"]').first();
+  const existe = (await aba.count()) > 0;
+  if (existe) {
+    await aba.click({ force: true, timeout: 10000 }).catch(async () => {
+      await aba.evaluate((el) => {
+        const alvo = el.querySelector(".gwt-Label") || el;
+        for (const t of ["mouseover", "mousedown", "mouseup", "click"])
+          alvo.dispatchEvent(new MouseEvent(t, { bubbles: true, cancelable: true, view: window }));
+      });
+    });
+  }
+  relato("aba Painel do Vendedor clicada", existe ? "sim" : "aba não existe");
+  return existe;
 }
