@@ -1559,6 +1559,10 @@ export const AUDIT_ACTIONS = [
   // "quem moveu" no painel. Mover roteador em silêncio não existe: as duas
   // camadas são gravadas na mesma operação.
   "ai.router_channel_moved",
+  // DutorWork (fork Dutorama): o robô do Sankhya entregou um lote de pedidos.
+  // Metadata leva só contagens (recebidos, novos, sem_detalhe) e o período —
+  // nenhum dado de cliente.
+  "dutorwork.pedidos_recebidos",
 ] as const;
 
 /** Um código de auditoria. Derivado de `AUDIT_ACTIONS` — não redigite a lista. */

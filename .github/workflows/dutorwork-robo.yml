@@ -73,6 +73,9 @@ jobs:
           SANKHYA_USUARIO: ${{ secrets.SANKHYA_USUARIO }}
           SANKHYA_SENHA: ${{ secrets.SANKHYA_SENHA }}
           SAIDA: retrato
+          # Destino dos pedidos. Os dois vazios = o robô só guarda o retrato.
+          DUTORWORK_URL: ${{ secrets.DUTORWORK_URL }}
+          DUTORWORK_ROBO_TOKEN: ${{ secrets.DUTORWORK_ROBO_TOKEN }}
           PERIODO: ${{ env.PERIODO }}
         run: node "$TAREFA.mjs"
 

@@ -132,6 +132,14 @@ const schema = z.object({
    * (404); com menos de 32 caracteres também fica desligada.
    */
   TENANT_PROVISIONING_SECRET: z.string().optional().default(""),
+  /**
+   * DutorWork (fork Dutorama): segredo do robô do Sankhya para
+   * `POST /api/v1/webhooks/dutorwork/pedidos`. Vazio = a rota não existe (404);
+   * com menos de 32 caracteres também fica desligada.
+   */
+  DUTORWORK_ROBO_TOKEN: z.string().optional().default(""),
+  /** Organização que recebe os pedidos do robô (uuid). Vazio = rota desligada. */
+  DUTORWORK_ORGANIZATION_ID: z.string().optional().default(""),
 
   // Laboratório local de extensões: origem HTTP exata em 127.0.0.1. O cliente
   // recusa a exceção se a URL do app não for loopback. Vazio mantém HTTPS público.

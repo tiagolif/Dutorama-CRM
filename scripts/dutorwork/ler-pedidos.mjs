@@ -162,11 +162,31 @@ try {
       pedidos.push(montarPedido(linha, d));
     }
     relato("detalhes lidos", detalhes);
-    writeFileSync(
-      `${SAIDA}/pedidos.json`,
-      JSON.stringify({ lido_em: new Date().toISOString(), periodo: PERIODO, pedidos }, null, 2),
-    );
-    ok = true;
+    const lote = { lido_em: new Date().toISOString(), periodo: PERIODO, pedidos };
+    const destino = process.env.DUTORWORK_URL;
+    const token = process.env.DUTORWORK_ROBO_TOKEN;
+    if (destino && token) {
+      // Entrega no Dutorama. A resposta só traz contagens.
+      const resp = await fetch(`${destino.replace(/\/$/, "")}/api/v1/webhooks/dutorwork/pedidos`, {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+        body: JSON.stringify(lote),
+      });
+      const corpo = await resp.json().catch(() => ({}));
+      relato("entrega no Dutorama", `HTTP ${resp.status}`);
+      if (resp.ok) {
+        relato("pedidos novos", corpo?.data?.novos ?? "?");
+        relato("pedidos já existentes", corpo?.data?.ja_existiam ?? "?");
+        ok = true;
+      } else {
+        relato("recusa do Dutorama", String(corpo?.error?.code ?? "sem código"));
+      }
+    } else {
+      // Sem destino configurado: guarda para conferência (sai criptografado).
+      writeFileSync(`${SAIDA}/pedidos.json`, JSON.stringify(lote, null, 2));
+      relato("entrega no Dutorama", "sem destino configurado — guardado só no retrato");
+      ok = true;
+    }
   }
 } catch (erro) {
   relato("erro", String(erro?.message ?? erro).split("\n")[0].slice(0, 300));

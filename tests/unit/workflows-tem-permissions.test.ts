@@ -52,6 +52,8 @@ const DIR = join(process.cwd(), ".github/workflows");
  * acrescente, e acrescentar sem razão é visível em code review.
  */
 const ESCRITA_JUSTIFICADA: Record<string, string> = {
+  "dutorwork-robo.yml::contents: write":
+    "o robô do Sankhya grava o retrato CRIPTOGRAFADO num ramo próprio (dutorwork-retratos): o artefato do Actions não é alcançável de onde o retrato é lido; o repositório é público e nada legível sai do job",
   "publish-image.yml::packages: write":
     "publica a imagem do app no GHCR — é o artefato que o self-hoster instala",
   "vigia-de-colisao.yml::pull-requests: write":

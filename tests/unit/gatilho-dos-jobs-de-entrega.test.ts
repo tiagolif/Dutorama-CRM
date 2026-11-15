@@ -245,6 +245,13 @@ const GATILHO_ESPERADO: Record<string, { condicao: string | null; efeito: string
     condicao: null,
     efeito: "Este é o check obrigatório `build-and-size` (`pnpm build` em Node 22).",
   },
+  "dutorwork-robo.yml::robo": {
+    condicao: null,
+    efeito:
+      "Robô do Sankhya do DutorWork (fork Dutorama): entra no Painel do Vendedor e lê os pedidos. " +
+      "Não é check de entrega e não roda em PR. Se não rodar, os pedidos novos não chegam ao Dutorama " +
+      "e o checklist fica parado até a próxima checagem.",
+  },
   "mysql-integracao.yml::integracao-mysql": {
     condicao: null,
     efeito:
