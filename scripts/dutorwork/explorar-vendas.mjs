@@ -3,7 +3,7 @@
 // CRIPTOGRAFA com a chave pública antes de publicar. No log só vai sim/não.
 import { chromium } from "playwright";
 import { mkdirSync, writeFileSync } from "node:fs";
-import { abrirNavegador, entrar, framePainel, relato, textoDoFrame } from "./sankhya.mjs";
+import { abrirAbaPainel, abrirNavegador, entrar, framePainel, relato, textoDoFrame } from "./sankhya.mjs";
 
 const SAIDA = process.env.SAIDA || "retrato";
 mkdirSync(SAIDA, { recursive: true });
@@ -39,8 +39,8 @@ try {
   });
   if (ok) {
     await guardar(page, "01-depois-do-login");
-    await clicarSeVisivel(page.getByText(/painel do vendedor/i), "aba Painel do Vendedor");
-    const painel = await framePainel(page);
+    await abrirAbaPainel(page);
+    const painel = await framePainel(page, 90000);
     relato("painel encontrado", painel ? "sim" : "não");
     await guardar(page, "02-painel");
     if (painel) {

@@ -76,11 +76,23 @@ export async function framePainel(page, timeoutMs = 60000) {
   while (Date.now() < fim) {
     for (const f of page.frames()) {
       if (/html5component/.test(f.url())) {
-        const n = await f.getByText(/carrinho de venda|minhas vendas|configurar pedido/i).count().catch(() => 0);
-        if (n) return f;
+        // O menu lateral (Recolher + Região) só existe no Painel do Vendedor;
+        // "Carrinho de Vendas" sozinho também aparece no cartão Lançador da tela inicial.
+        const a = await f.getByText(/^\s*recolher\s*$/i).count().catch(() => 0);
+        const b = await f.getByText(/^\s*região\s*$/i).count().catch(() => 0);
+        if (a && b) return f;
       }
     }
     await page.waitForTimeout(1000);
   }
   return null;
+}
+
+// Abre a aba "Painel do Vendedor" da barra superior do Sankhya (rótulo GWT).
+export async function abrirAbaPainel(page) {
+  const aba = page.locator(".gwt-Label", { hasText: /painel do vendedor -/i }).first();
+  const ok = await aba.isVisible().catch(() => false);
+  if (ok) await aba.click();
+  relato("aba Painel do Vendedor clicada", ok ? "sim" : "não");
+  return ok;
 }
