@@ -93,7 +93,8 @@ export async function framePainel(page, timeoutMs = 60000) {
 // para o Playwright; por isso o clique é forçado e, se falhar, disparado à mão.
 export async function abrirAbaPainel(page) {
   const aba = page.locator('li.AppItem[orig-title^="Painel do Vendedor"]').first();
-  const existe = (await aba.count()) > 0;
+  // A barra de abas do GWT é montada alguns segundos depois do login.
+  const existe = await aba.waitFor({ state: "attached", timeout: 60000 }).then(() => true, () => false);
   if (existe) {
     await aba.click({ force: true, timeout: 10000 }).catch(async () => {
       await aba.evaluate((el) => {
