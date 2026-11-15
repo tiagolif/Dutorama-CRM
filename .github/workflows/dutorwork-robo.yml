@@ -16,6 +16,8 @@ name: dutorwork-robo
 on:
   push:
     branches: [dutorwork/teste-login]
+    # Só quando o próprio robô muda: cada execução é um login no Sankhya.
+    paths: [scripts/dutorwork/**, .github/workflows/dutorwork-robo.yml]
   workflow_dispatch:
 
 permissions:
