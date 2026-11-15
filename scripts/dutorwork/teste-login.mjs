@@ -12,7 +12,12 @@ function relato(chave, valor) {
 }
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ locale: "pt-BR", timezoneId: "America/Sao_Paulo" });
+const page = await browser.newPage({
+  locale: "pt-BR",
+  timezoneId: "America/Sao_Paulo",
+  // O Sankhya recusa tela menor que 1024x768; o padrão do Playwright (1280x720) fica abaixo.
+  viewport: { width: 1536, height: 864 },
+});
 let ok = false;
 
 try {
@@ -54,7 +59,9 @@ try {
   } else {
     // Ainda na tela de login: o aviso dali (senha errada, acesso bloqueado)
     // não traz dado de cliente, então pode ir para o log, curto.
-    const aviso = (await page.locator("body").innerText().catch(() => "")).replace(/\s+/g, " ").slice(0, 300);
+    const textos = [];
+    for (const f of page.frames()) textos.push(await f.locator("body").innerText().catch(() => ""));
+    const aviso = textos.join(" | ").replace(/\s+/g, " ").slice(0, 400);
     relato("aviso na tela de login", aviso || "(nenhum texto)");
   }
 } catch (erro) {
