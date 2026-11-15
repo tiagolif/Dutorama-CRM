@@ -29,7 +29,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  TAREFA: explorar-vendas
+  TAREFA: ler-pedidos
+  PERIODO: 7dias
 
 jobs:
   robo:
@@ -72,6 +73,7 @@ jobs:
           SANKHYA_USUARIO: ${{ secrets.SANKHYA_USUARIO }}
           SANKHYA_SENHA: ${{ secrets.SANKHYA_SENHA }}
           SAIDA: retrato
+          PERIODO: ${{ env.PERIODO }}
         run: node "$TAREFA.mjs"
 
       - name: Criptografar o retrato
